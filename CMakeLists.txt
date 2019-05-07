@@ -16,6 +16,10 @@ cet_set_compiler_flags(
 # Sanity check
 add_executable(cbt-sanity smoketest/sanity.cc)
 
+# Build externals, because we don't have a UPS product for them
+# It also helps test against the newer compilers/standards required
+include(externals/bayeux.cmake)
+
 # FHiCL
 add_subdirectory(fcl)
 
