@@ -1,0 +1,3 @@
+# Configure/install FHiCL files
+# NB: does *not* install a C-headers like hierarchy....
+install_fhicl(SUBDIRS snemo)

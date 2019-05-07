@@ -1,0 +1,64 @@
+# The parent line must be the first non-comment line in the file
+# This line defines the product name and version
+parent impressionist v1_00_00
+defaultqual e17
+
+# These optional lines define the installed directories where headers,
+# libraries, and executables will be found.
+# Use them only if your product does not conform to the defaults
+#
+# Format: directory_type directory_path directory_name
+#
+# The only recognized values of the first field are listed under Defaults
+# The only recognized values of the second field are product_dir, fq_dir, and -
+# The third field is not constrained.
+#
+# Defaults:
+# incdir  product_dir  include
+# fcldir  product_dir  fcl
+# libdir  fq_dir       lib
+# bindir  fq_dir       bin
+# gdmldir  -
+# fwdir    -
+# set_fwdir -
+#
+# If a particular directory_type is not specified that item will not be
+# defined in the UPS table file.
+incdir product_dir include
+fcldir product_dir fcl
+libdir fq_dir      lib
+bindir fq_dir      bin
+
+# if define_pythonpath is enabled, the PYTHONPATH variable will be set
+#define_pythonpath
+
+# List all products here.
+# The 4th field may contain the keywords 'optional' or 'only_for_build'
+# With the <format=2> notation present in the header line, products to
+# be setup regardless of selected qualifier should use - as a
+# placeholder rather than -nq-, use of which will now specifically require an
+# absence of qualifier in order for the product to be set up.
+# Also permissible as a qualifier: the keyword '-default-': this product and
+# version will be selected if no other version of this product is selected.
+#
+# LArSoft don't provide the critic product, so copy table from critic v2_00_04
+# (that allows py3 support, which isn't yet available in v2_00_05
+product         version
+art             v3_02_04
+art_root_io     v1_00_04
+gallery         v1_12_03
+cetbuildtools   v7_12_01 	-	only_for_build
+end_product_list
+
+qualifier        art            art_root_io    gallery        notes
+e17:debug        e17:debug      e17:debug      e17:debug
+e17:prof         e17:prof       e17:prof       e17:prof
+e17:debug:py3    e17:debug:py3  e17:debug:py3  e17:debug:py3
+e17:prof:py3     e17:prof:py3   e17:prof:py3   e17:prof:py3
+end_qualifier_list
+
+### Local Variables:
+### tab-width: 8
+### End:
+
+# vi:set ts=8 noexpandtab:
