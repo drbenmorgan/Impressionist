@@ -76,3 +76,16 @@ You should see the famililar CMake/Make output and final success.
 If you make changes to the code, simply rerun `buildtool -bt` to reconfigure,
 recompile and retest.
 
+
+Current Workarounds
+===================
+Because we currently rely on the LArSoft distribution of Art, plus FNAL's UPS/Cetbuildtools, some
+workarounds are needed at the moment to work with Impressionist.
+
+1. The [externals](externals) subdirectory holds CMake scripts to build packages unavailable through
+   CVMFS/UPS:
+
+   - [Bayeux](https:github.com/SuperNEMO-DBD/Bayeux) for Detector Description, Event Generation,
+     and Boost.Serialization readers for Raw/Simulated Data.
+
+We expect most of these to be resolved by FNAL's move to Spack/CetModules for distribution.

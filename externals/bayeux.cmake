@@ -2,12 +2,35 @@
 include(ExternalProject)
 include(ProcessorCount)
 
+ProcessorCount(N)
+if(NOT N EQUAL 0)
+  set(PARALLEL_ARG "-j${N}")
+endif()
+
+# - Some egg-chicken is needed to allow build via ExternalProject
+#   and use via an imported target
+set(EXTERNALS_INSTALL_PREFIX ${CMAKE_CURRENT_BINARY_DIR}/IMPExternals)
+set(EXTERNALS_INSTALL_LIBDIR ${EXTERNALS_INSTALL_PREFIX}/lib)
+set(EXTERNALS_INSTALL_INCLUDEDIR ${EXTERNALS_INSTALL_PREFIX}/include)
+
+set(Bayeux_LIBRARY ${EXTERNALS_INSTALL_LIBDIR}/${CMAKE_SHARED_LIBRARY_PREFIX}Bayeux${CMAKE_SHARED_LIBRARY_SUFFIX})
+
+set(Bayeux_INCLUDE_DIRS ${EXTERNALS_INSTALL_INCLUDEDIR} ${EXTERNALS_INSTALL_INCLUDEDIR}/bayeux)
+
+foreach(_dir ${Bayeux_INCLUDE_DIRS})
+  if(NOT EXISTS ${_dir})
+    message(STATUS "making directory ${_dir}")
+    file(MAKE_DIRECTORY ${_dir})
+  endif()
+endforeach()
+
+
 ExternalProject_Add(CAMP_EP
   GIT_REPOSITORY https://github.com/drbenmorgan/camp.git
   GIT_TAG 7564e57f7b406d1021290cf2260334d57d8df255
   GIT_SHALLOW TRUE
   UPDATE_COMMAND ""
-  INSTALL_DIR ${PROJECT_BINARY_DIR}/Externals
+  INSTALL_DIR ${EXTERNALS_INSTALL_PREFIX}
   CMAKE_CACHE_ARGS
     -DCMAKE_INSTALL_PREFIX:PATH=<INSTALL_DIR>
     -DCMAKE_BUILD_TYPE:STRING=${CMAKE_BUILD_TYPE}
@@ -24,8 +47,8 @@ ExternalProject_Add(BAYEUX_EP
   GIT_TAG f3807c6dc8e921246be51d34531e4074dc635418
   GIT_SHALLOW TRUE
   UPDATE_COMMAND ""
-  #PATCH_COMMAND patch -p1 < ${CMAKE_CURRENT_LIST_DIR}/bayeux-3.3.0.patch
-  INSTALL_DIR ${PROJECT_BINARY_DIR}/Externals
+  PATCH_COMMAND patch -p1 < ${CMAKE_CURRENT_LIST_DIR}/bayeux-pr-41.patch
+  INSTALL_DIR ${EXTERNALS_INSTALL_PREFIX}
   CMAKE_CACHE_ARGS
     -DCMAKE_INSTALL_PREFIX:PATH=<INSTALL_DIR>
     -DCMAKE_INSTALL_LIBDIR:STRING=lib
@@ -39,29 +62,19 @@ ExternalProject_Add(BAYEUX_EP
     -DBAYEUX_WITH_EMFIELD:BOOL=OFF
     -DBAYEUX_WITH_GEANT4_MODULE:BOOL=OFF
     -DBAYEUX_WITH_QT_GUI:BOOL=OFF
-  TEST_COMMAND ${CMAKE_CTEST_COMMAND}
+  TEST_COMMAND ${CMAKE_CTEST_COMMAND} ${PARALLEL_ARG} -E ihs
   TEST_BEFORE_INSTALL TRUE
   DEPENDS CAMP_EP
   BUILD_BYPRODUCTS
-    ${PROJECT_BINARY_DIR}/Externals/lib/${CMAKE_SHARED_LIBRARY_PREFIX}Bayeux${CMAKE_SHARED_LIBRARY_SUFFIX}
-    ${PROJECT_BINARY_DIR}/Externals/include
+    ${Bayeux_LIBRARY}
+    ${Bayeux_INCLUDE_DIRS}
   )
 
 # - Create "imported" target for Bayeux so we can link to it just as if
 #   we'd called find_package(Bayeux).
-# - Some egg-chicken is needed as we build it via ExternalProject
-set(Bayeux_LIBRARY ${PROJECT_BINARY_DIR}/BuildProducts/lib/${CMAKE_SHARED_LIBRARY_PREFIX}Bayeux${CMAKE_SHARED_LIBRARY_SUFFIX})
-set(Bayeux_INCLUDE_DIRS ${PROJECT_BINARY_DIR}/BuildProducts/include ${PROJECT_BINARY_DIR}/BuildProducts/include/bayeux)
-foreach(_dir ${Bayeux_INCLUDE_DIRS})
-  if(NOT EXISTS ${_dir})
-    message(STATUS "making directory ${_dir}")
-    file(MAKE_DIRECTORY ${_dir})
-  endif()
-endforeach()
-
 add_library(Bayeux::Bayeux UNKNOWN IMPORTED)
 set_property(TARGET Bayeux::Bayeux PROPERTY IMPORTED_LOCATION ${Bayeux_LIBRARY})
-set_property(TARGET Bayeux::Bayeux PROPERTY INTERFACE_INCLUDE_DIRECTORIES "${PROJECT_BINARY_DIR}/Externals/include;${PROJECT_BINARY_DIR}/Externals/include/bayeux")
+set_property(TARGET Bayeux::Bayeux PROPERTY INTERFACE_INCLUDE_DIRECTORIES "${Bayeux_INCLUDE_DIRS}")
 set_property(TARGET Bayeux::Bayeux PROPERTY INTERFACE_LINK_LIBRARIES "${Boost_LIBRARIES}")
 
 add_dependencies(Bayeux::Bayeux BAYEUX_EP)
