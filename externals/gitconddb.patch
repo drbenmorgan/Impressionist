@@ -1,0 +1,14 @@
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index eb92072..5842e01 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -159,7 +159,8 @@ if(NOT GTEST_FOUND)
+ 
+   ExternalProject_Add(googletest-distribution
+     ${GTEST_SOURCES}
+-    CMAKE_CACHE_ARGS -DCMAKE_INSTALL_PREFIX:SRTING=<INSTALL_DIR>
++    CMAKE_CACHE_ARGS -DCMAKE_INSTALL_PREFIX:STRING=<INSTALL_DIR>
++                     -DCMAKE_INSTALL_LIBDIR:STRING=lib
+                      -DBUILD_GTEST:BOOL=YES -DBUILD_GMOCK:BOOL=NO
+                      -DCMAKE_EXPORT_COMPILE_COMMANDS:BOOL=YES
+                      -DCMAKE_CXX_STANDARD:STRING=17 -DCMAKE_CXX_EXTENSIONS:BOOL=OFF)

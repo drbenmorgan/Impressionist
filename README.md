@@ -85,7 +85,14 @@ workarounds are needed at the moment to work with Impressionist.
 1. The [externals](externals) subdirectory holds CMake scripts to build packages unavailable through
    CVMFS/UPS:
 
-   - [Bayeux](https:github.com/SuperNEMO-DBD/Bayeux) for Detector Description, Event Generation,
+   - [Bayeux](https://github.com/SuperNEMO-DBD/Bayeux) for Detector Description, Event Generation,
      and Boost.Serialization readers for Raw/Simulated Data.
+   - [GitCondDB](https://gitlab.cern.ch/LHCb/GitCondDB) for Conditions Database API.
+     - Also builds needed dependencies libssh2, libgit2 fmt, nlohmann-json, so are also available
+
+   Mocked CMake imported targets are provided for these so that linking behaves just as
+   if `find_package(NAME)` had been used. However, in line with the non-installable nature
+   of Impressionist, no export/refind is supported.
+
 
 We expect most of these to be resolved by FNAL's move to Spack/CetModules for distribution.

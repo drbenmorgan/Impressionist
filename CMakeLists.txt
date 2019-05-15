@@ -16,11 +16,22 @@ cet_set_compiler_flags(
 # Build externals, because we don't have a UPS product for them
 # It also helps test against the newer compilers/standards required
 include(externals/bayeux.cmake)
+include(externals/gitconddb.cmake)
 
-# Sanity checks
+# Sanity compilation-time tests
 add_executable(cbt-sanity smoketest/sanity.cc)
-add_executable(cbt-externals smoketest/externals.cc)
-target_link_libraries(cbt-externals Bayeux::Bayeux)
+
+add_executable(cbt-externals-bayeux smoketest/externals.cc)
+target_compile_definitions(cbt-externals-bayeux PRIVATE IMP_TEST_BAYEUX)
+target_link_libraries(cbt-externals-bayeux Bayeux::Bayeux)
+
+add_executable(cbt-externals-gitconddb smoketest/externals.cc)
+target_compile_definitions(cbt-externals-gitconddb PRIVATE IMP_TEST_GITCONDDB IMP_TEST_REPO=${PROJECT_SOURCE_DIR})
+target_link_libraries(cbt-externals-gitconddb GitCondDB::GitCondDB)
+
+add_executable(cbt-externals-nlohmann smoketest/externals.cc)
+target_compile_definitions(cbt-externals-nlohmann PRIVATE IMP_TEST_NLOHMANN)
+target_link_libraries(cbt-externals-nlohmann nlohmann_json::nlohmann_json)
 
 # FHiCL
 add_subdirectory(fcl)

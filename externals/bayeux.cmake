@@ -1,17 +1,5 @@
 # Have to vendor Bayeux+CAMP dep temporarily...
-include(ExternalProject)
-include(ProcessorCount)
-
-ProcessorCount(N)
-if(NOT N EQUAL 0)
-  set(PARALLEL_ARG "-j${N}")
-endif()
-
-# - Some egg-chicken is needed to allow build via ExternalProject
-#   and use via an imported target
-set(EXTERNALS_INSTALL_PREFIX ${CMAKE_CURRENT_BINARY_DIR}/IMPExternals)
-set(EXTERNALS_INSTALL_LIBDIR ${EXTERNALS_INSTALL_PREFIX}/lib)
-set(EXTERNALS_INSTALL_INCLUDEDIR ${EXTERNALS_INSTALL_PREFIX}/include)
+include(externals/extcommon.cmake)
 
 set(Bayeux_LIBRARY ${EXTERNALS_INSTALL_LIBDIR}/${CMAKE_SHARED_LIBRARY_PREFIX}Bayeux${CMAKE_SHARED_LIBRARY_SUFFIX})
 
