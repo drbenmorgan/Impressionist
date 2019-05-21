@@ -14,7 +14,18 @@ it provides many features **not** supported by _Falaise_, namely:
 The primary point of contact for users is the `art` executable which, like
 `flreconstruct`, is run by supplying input/output source(s)/sink(s) for
 data together which a script defining the workflow to be performed on that
-data. We'll start by looking at the basic use of `art` and its scripting
+data. 
+
+Though the sections below are a largely self-contained introduction to _art_, they 
+should be consulted together with the main _art_ framework and scripting 
+documentation available at:
+
+- [Overall Art Guide](https://cdcvs.fnal.gov/redmine/projects/art/wiki)
+- [FHiCL Language Syntax and Semantics](https://cdcvs.fnal.gov/redmine/documents/327)
+- [FHiCL C++ Binding](https://cdcvs.fnal.gov/redmine/projects/fhicl-cpp/wiki)
+- [Art Framework FHiCL Grammar and Parameters](https://cdcvs.fnal.gov/redmine/projects/art/wiki/ART_framework_parameters)
+
+We'll start by looking at the basic use of `art` and its pipeline scripting
 language before looking at how to implement our own modules.
 
 Getting Started
