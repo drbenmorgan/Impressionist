@@ -231,10 +231,10 @@ In the following sections we'll walk through the build up of a FHiCL script for 
 the schema for defining services, modules, pipeline, and I/O. All of these examples can be browsed
 under the [top-level fcl/examples directory](../fcl/examples).
 
-[`zero.fcl`](../fcl/examples/zero.fcl)
+[The Simplest Pipeline Possible](../fcl/examples/zero.fcl)
 ----------
 Art implements sensible defaults for processing, and so an empty (or rather, pure whitespace/comment)
-file as shown in [fcl/examples/zero.fcl](../fcl/examples/zero.fcl) is perfectly valid.
+script as shown in [fcl/examples/zero.fcl](../fcl/examples/zero.fcl) is perfectly valid.
 Checking the output of `art --help`, we can see that to pass a script to `art` via the `-c` argument:
 
 ```console
@@ -277,7 +277,7 @@ compile/test cycle uses an FHiCL scripts supplied by the project.  As we'll see 
 also enables the _composability_ of FHiCL scripts by providing a C++ header like lookup.
 
 
-[`first.fcl`](../fcl/examples/first.fcl)
+[Defining the Input Source](../fcl/examples/first.fcl)
 -----------
 The input to _art_'s pipeline is defined by the `source` [table](https://cdcvs.fnal.gov/redmine/projects/art/wiki/ART_framework_parameters) in the script.
 As we don't have input files or other event source yet, we can use _art_'s
@@ -347,7 +347,7 @@ Art has completed and will exit with status 0.
 $
 ```
 
-[`second.fcl`](../fcl/examples/second.fcl)
+[Defining the Number of Events](../fcl/examples/second.fcl)
 ------------
 
 This script extends `first.fcl` to show how the number of events to process can be
@@ -496,7 +496,7 @@ $
 Try adding some of the other parameters listed in the documentation for `EmptyEvent` and see what happens!
 
 
-[`third.fcl`](../fcl/examples/third.fcl)
+[Defining Where to Output Data](../fcl/examples/third.fcl)
 -----------
 So far our empty events are not processed and no results are output to file.
 As with the number of events, output to file can be controlled by a command
@@ -642,7 +642,7 @@ $
 ```
 
 
-[`fourth.fcl`](../fcl/examples/fourth.fcl)
+[The Basic Schema for Input-Process-Output](../fcl/examples/fourth.fcl)
 ------------
 Now we have an output Art file, we can use it as an event source. All we need
 to do is change the `source` table to use the `RootInput` module which can read
@@ -725,7 +725,7 @@ the module can take. Note in particular that `fileNames` is plural, so you can
 process multiple input files in the same run.
 
 
-[`fifth.fcl`](../fcl/examples/fifth.fcl)
+[Filtering Events](../fcl/examples/fifth.fcl)
 -----------
 Even though we are not processing events, we can still demonstrate simple filtering
 (i.e. cuts) of events based on their Run/SubRun/Event ids. Art provides a filter module
@@ -926,7 +926,7 @@ the art Wiki on [paths](https://cdcvs.fnal.gov/redmine/projects/art/wiki/Paths)
 and [filtering](https://cdcvs.fnal.gov/redmine/projects/art/wiki/Filtering_events).
 
 
-[`sixth.fcl`](../fcl/examples/sixth.fcl)
+[Composing FHiCL Scripts with `#include`](../fcl/examples/sixth.fcl)
 -----------
 As noted above, FHiCL scripts are _composable_ from a set of smaller scripts. This mechansism
 is implemented in the same way as C/C++ headers, so effectively FHiCL scripts can "#include" others,
@@ -951,7 +951,7 @@ The `#include` mechanism is extremely useful to separate concerns and provide
 packaged, experiment specific configurations for things like processing modules.
 It can be abused though, and a set of [guidelines for best practice is available](https://indico.fnal.gov/event/9928/session/6/material/0/7)
 
-[`seventh.fcl`](../fcl/examples/seventh.fcl)
+[Composition and Overriding Parameters](../fcl/examples/seventh.fcl)
 -------------
 
 Unless specified, FHiCL allows parameter values to be overridden in scripts, with
@@ -989,7 +989,7 @@ Note that FHiCL does require that all overriden parameters be "fully
 qualified". See Section 5.4 "Table Values" of the [FHiCL Quickstart Guide](https://cdcvs.fnal.gov/redmine/documents/327)
 for the strict meaning of this.
 
-[`eighth.fcl`](../fcl/examples/eighth.fcl)
+[Composition and Inclusion with Parameter References](../fcl/examples/eighth.fcl)
 ------------
 Straight inclusion of a "bare" script is allowed by the FHiCL grammar, but it is
 recommended to package scripts for inclusion as "Prologs". Section 8 on Prologs
@@ -1016,7 +1016,7 @@ See Section 7 on References in the [FHiCL Quickstart Guide](https://cdcvs.fnal.g
 for full details on this syntax.
 
 
-[`ninth.fcl`](../fcl/examples/ninth.fcl)
+[Preventing Parameter Override with Protection](../fcl/examples/ninth.fcl)
 -----------
 
 FHiCL parameters are mutable, i.e. can be overriden as shown earlier, by default.
