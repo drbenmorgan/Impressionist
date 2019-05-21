@@ -951,3 +951,40 @@ The `#include` mechanism is extremely useful to separate concerns and provide
 packaged, experiment specific configurations for things like processing modules.
 It can be abused though, and a set of [guidelines for best practice is available](https://indico.fnal.gov/event/9928/session/6/material/0/7)
 
+[`seventh.fcl`](../fcl/examples/seventh.fcl)
+-------------
+
+Unless specified, FHiCL allows parameter values to be overridden in scripts, with
+a "latest wins" policy. In combination with `#include`, we can
+
+- Include a packaged configuration script
+- Override 1-N parameters to adjust behaviour.
+
+For example, we can reuse our `third.fcl` configuration, and [override the number of events
+and output file](../fcl/examples/seventh.fcl):
+
+```
+#include "examples/third.fcl"
+
+source: {
+  maxEvents: 100
+}
+
+outputs.myOutput.fileName: "seventh.art"
+```
+
+Running this as
+
+```console
+$ art -c examples/seventh.fcl
+```
+
+should produce similar output to the third example, and yield a `seventh.art`
+output file.
+
+This can easily be extended to more complex tasks, for example profiling
+changes to a few reconstruction parameters.
+
+Note that FHiCL does require that all overriden parameters be "fully
+qualified". See Section 5.4 "Table Values" of the [FHiCL Quickstart Guide](https://cdcvs.fnal.gov/redmine/documents/327)
+for the strict meaning of this.
