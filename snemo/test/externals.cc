@@ -25,7 +25,7 @@ run_test()
     throw std::runtime_error{"No db connection"};
   }
 
-  auto row = db.get({"HEAD", "smoketest/externals.cc", 0});
+  auto row = db.get({"HEAD", "snemo/test/externals.cc", 0});
   std::cout << std::get<0>(row) << std::endl;
 
   db.disconnect();
