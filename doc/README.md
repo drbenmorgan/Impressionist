@@ -230,3 +230,50 @@ from several "unit" scripts).
 In the following sections we'll walk through the build up of a FHiCL script for _art_, illustrating
 the schema for defining services, modules, pipeline, and I/O. All of these examples can be browsed
 under the [top-level fcl/examples directory](../fcl/examples).
+
+`zero.fcl`
+----------
+Art implements sensible defaults for processing, and so an empty (or rather, pure whitespace/comment)
+file as shown in [../fcl/examples/zero.fcl](../fcl/examples/zero.fcl) is perfectly valid.
+Checking the output of `art --help`, we can see that to pass a script to `art` via the `-c` argument:
+
+```console
+$ art -c examples/zero.fcl
+INFO: provided configuration file 'examples/zero.fcl' is empty: 
+using minimal defaults and command-line options.
+INFO: using default process_name of "DUMMY".
+%MSG-i MF_INIT_OK:  Early 21-May-2019 15:33:59 BST JobSetup
+Messagelogger initialization complete.
+%MSG
+Begin processing the 1st record. run: 1 subRun: 0 event: 1 at 21-May-2019 15:33:59 BST
+
+TrigReport ---------- Event  Summary ------------
+TrigReport Events total = 1 passed = 1 failed = 0
+
+TimeReport ---------- Time  Summary ---[sec]----
+TimeReport CPU = 0.002838 Real = 0.002903
+
+MemReport  ---------- Memory  Summary ---[base-10 MB]----
+MemReport  VmPeak = 168.993 VmHWM = 34.9389
+
+Art has completed and will exit with status 0.
+$
+```
+
+Your output will of course differ slightly depnding on time and exact system CPU. Of course,
+nothing much has happened, but note how we passed the script's path to `art` via _relative path_.
+Art will search for the script we supply using the following rules:
+
+- An absolute path will be used as provided, with execution stopped if the file does not exist
+- A relative path will be:
+  - Looked for relative to the working directory and used if found, otherwise
+  - It will be searched for under each element of the `FHICL_FILE_PATH` environment variable, with:
+    - The first existing matched file being used, or
+    - Execution will be stopped if no existing matched file is found
+
+The reason that suppliying `examples/zero.fcl` as a relative path works is that is has been found through searching 
+`FHICL_FILE_PATH`. Impressionist follows standard _art_ practice for compiling/testing projects by setting `FHICL_FILE_PATH` 
+appropriately so that FHiCL scripts can be found reliably. As we'll see later, the use of `FHICL_FILE_PATH` also enables the
+_composability_ of FHiCL scripts.
+
+
