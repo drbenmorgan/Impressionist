@@ -80,6 +80,17 @@ Note that the first build will take time due to the externals being built. In
 addition you may see pauses at "Scanning dependencies of target Bayeux" due
 to the large amount of code and CVMFS caching if the local cache is "cold".
 
+After a successful build, programs and libraries will be located in the `bin`
+and `lib` subdirectories respectively of your build directory. CET's `setup_for_development`
+script adds these to any relevant path environment variables, so they can be used
+directly. To see how to make use of them, see the following section.
+
+
+Using Impressionist
+===================
+A full guide to using and extending Impressionist is available in the [doc/README.md](doc/README.md)
+file.
+
 
 Current Workarounds
 ===================
