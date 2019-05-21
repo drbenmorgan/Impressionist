@@ -112,5 +112,5 @@ add_dependencies(GitCondDB::GitCondDB GITCONDDB_EP)
 #   we'd called find_package(nlohmann_json)
 add_library(nlohmann_json::nlohmann_json INTERFACE IMPORTED)
 set_property(TARGET nlohmann_json::nlohmann_json PROPERTY INTERFACE_INCLUDE_DIRECTORIES "${EXTERNALS_INSTALL_INCLUDEDIR}")
-
+add_dependencies(nlohmann_json::nlohmann_json NLOHMANNJSON_EP)
 

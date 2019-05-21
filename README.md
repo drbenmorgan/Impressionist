@@ -76,6 +76,10 @@ You should see the famililar CMake/Make output and final success.
 If you make changes to the code, simply rerun `buildtool -bt` to reconfigure,
 recompile and retest.
 
+Note that the first build will take time due to the externals being built. In
+addition you may see pauses at "Scanning dependencies of target Bayeux" due
+to the large amount of code and CVMFS caching if the local cache is "cold".
+
 
 Current Workarounds
 ===================
