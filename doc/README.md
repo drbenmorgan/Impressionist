@@ -231,10 +231,10 @@ In the following sections we'll walk through the build up of a FHiCL script for 
 the schema for defining services, modules, pipeline, and I/O. All of these examples can be browsed
 under the [top-level fcl/examples directory](../fcl/examples).
 
-`zero.fcl`
+[`zero.fcl`](../fcl/examples/zero.fcl)
 ----------
 Art implements sensible defaults for processing, and so an empty (or rather, pure whitespace/comment)
-file as shown in [../fcl/examples/zero.fcl](../fcl/examples/zero.fcl) is perfectly valid.
+file as shown in [fcl/examples/zero.fcl](../fcl/examples/zero.fcl) is perfectly valid.
 Checking the output of `art --help`, we can see that to pass a script to `art` via the `-c` argument:
 
 ```console
@@ -277,7 +277,7 @@ compile/test cycle uses an FHiCL scripts supplied by the project.  As we'll see 
 also enables the _composability_ of FHiCL scripts by providing a C++ header like lookup.
 
 
-`first.fcl`
+[`first.fcl`](../fcl/examples/first.fcl)
 -----------
 The input to _art_'s pipeline is defined by the `source` [table](https://cdcvs.fnal.gov/redmine/projects/art/wiki/ART_framework_parameters) in the script.
 As we don't have input files or other event source yet, we can use _art_'s
@@ -347,7 +347,7 @@ Art has completed and will exit with status 0.
 $
 ```
 
-`second.fcl`
+[`second.fcl`](../fcl/examples/second.fcl)
 ------------
 
 This script extends `first.fcl` to show how the number of events to process can be
@@ -465,8 +465,8 @@ $
 You can still pass the `-n` command line argument to override the number of events.
 
 Part of the FHiCL validation system is helpful error messaging. For example,
-if we spell the name of a parameter incorrectly, `art` will point to the location
-and cause of the error:
+if we spell the name of a parameter incorrectly as in [fcl/examples/second_error.fcl](../fcl/examples/second_error.fcl), 
+`art` will point to the location and cause of the error:
 
 ``` console
 $ art -c examples/second_error.fcl
@@ -496,7 +496,7 @@ $
 Try adding some of the other parameters listed in the documentation for `EmptyEvent` and see what happens!
 
 
-`third.fcl`
+[`third.fcl`](../fcl/examples/third.fcl)
 -----------
 So far our empty events are not processed and no results are output to file.
 As with the number of events, output to file can be controlled by a command
