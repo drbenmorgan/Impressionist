@@ -272,8 +272,8 @@ Art will search for the script we supply using the following rules:
     - Execution will be stopped if no existing matched file is found
 
 The reason that suppliying `examples/zero.fcl` as a relative path works is that is has been found through searching 
-`FHICL_FILE_PATH`. Impressionist follows standard _art_ practice for compiling/testing projects by setting `FHICL_FILE_PATH` 
-appropriately so that FHiCL scripts can be found reliably. As we'll see later, the use of `FHICL_FILE_PATH` also enables the
-_composability_ of FHiCL scripts.
+`FHICL_FILE_PATH`. Impressionist sets this as part of its `setup_for_development` script so that running during the
+compile/test cycle uses an FHiCL scripts supplied by the project.  As we'll see later, the use of `FHICL_FILE_PATH` 
+also enables the _composability_ of FHiCL scripts by providing a C++ header like lookup.
 
 
