@@ -924,3 +924,30 @@ $
 We see the event ids are as expected. For further info on filtering and paths, see
 the art Wiki on [paths](https://cdcvs.fnal.gov/redmine/projects/art/wiki/Paths)
 and [filtering](https://cdcvs.fnal.gov/redmine/projects/art/wiki/Filtering_events).
+
+
+[`sixth.fcl`](../fcl/examples/sixth.fcl)
+-----------
+As noted above, FHiCL scripts are _composable_ from a set of smaller scripts. This mechansism
+is implemented in the same way as C/C++ headers, so effectively FHiCL scripts can "#include" others,
+using the `FHICL_FILE_PATH` just like the header search path of a compiler.
+
+The exact syntax of this feature is discussed in Section 9 of the [FHiCL Quickstart Guide](https://cdcvs.fnal.gov/redmine/documents/327). To illustrate the simplest use, we can reproduce 
+the behaviour of the `third.fcl` script via including it in a new, one line script:
+
+```
+#include "examples/third.fcl"
+```
+
+Running this in `art` yields identical results to before:
+
+```console
+$ art -c examples/sixth.fcl
+... output as for third.fcl ...
+$
+```
+
+The `#include` mechanism is extremely useful to separate concerns and provide
+packaged, experiment specific configurations for things like processing modules.
+It can be abused though, and a set of [guidelines for best practice is available](https://indico.fnal.gov/event/9928/session/6/material/0/7)
+
