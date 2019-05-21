@@ -1,0 +1,16 @@
+# second.fcl
+# Shows event number to process via FHiCL
+
+# All we need to create events is the source table
+source : {
+  # We don't have an input file, but Art supplies us with
+  # an "EmptyEvent" EDProducer module to populate the event loop
+  module_type : EmptyEvent
+
+  # Run `art --print-description EmptyEvent` to get a description
+  # of parameters that can be set for EmptyEvent
+
+  # Can override this with '-n' command line argument
+  maxEvents   : 10
+  firstRun    :  1
+}

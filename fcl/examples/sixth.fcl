@@ -1,0 +1,6 @@
+# sixth.fcl
+# Like C++, FHiCL can include other files:
+
+#include "examples/third.fcl"
+
+

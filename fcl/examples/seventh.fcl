@@ -1,0 +1,23 @@
+# seventh.fcl
+# Override of existing parameters after inclusion
+
+#include "examples/third.fcl"
+
+# After inclusion of other FHiCL files, we can substitute their
+# values, if allowed. We must fully qualify the parameters,
+# using either...
+
+# ... full tabular form...
+
+source: {
+  maxEvents: 100
+}
+
+# ... or ".namespace" style. 
+
+outputs.myOutput.fileName: "seventh.art"
+
+# Note that the follwing mixed form is *not* supported:
+# outputs: {
+#   myOutput.fileName: "seventh.art"
+# }

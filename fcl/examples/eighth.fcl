@@ -1,0 +1,29 @@
+# eighth.fcl
+# Use of #include and references
+
+#include "examples/empty_event.fcl"
+
+# All we need to create events is the source table, which we can now
+# take from the included FHiCL "header"
+source : {
+  # the "@table" syntax means "expand the contents of the named table
+  # at this point" 
+  @table::falaise.sources.empty_event
+}
+
+# Remainder of the script stays as before
+physics : {
+  op: [ myOutput ]
+}
+
+outputs : {
+  myOutput : {
+    module_type : RootOutput
+    fileName    : "eighth.art"
+  }
+}
+
+# The above could also go into headers...
+
+# ... can also substitute again...
+source.maxEvents : 75

@@ -1,0 +1,15 @@
+# empty_event.fcl
+# Like C/C++, FHiCL "code" can be partitioned into reusable blocks
+# Here, we've separated out the empty event source from earlier
+# into a so-called "PROLOG". Don't worry about that for now...
+BEGIN_PROLOG
+falaise : {
+  sources : {
+    empty_event: {
+      module_type : EmptyEvent
+      maxEvents   : 10
+      firstRun    : 1
+    }
+  }
+}
+END_PROLOG

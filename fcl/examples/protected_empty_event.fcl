@@ -1,0 +1,14 @@
+# protected_empty_event.fcl
+# In some cases we not want parameters to be substituted
+BEGIN_PROLOG
+falaise : {
+  sources : {
+    empty_event: {
+      module_type: EmptyEvent
+      # Try to substitute this later will yield an error
+      maxEvents @protect_error: 10
+      firstRun: 1
+    }
+  }
+}
+END_PROLOG

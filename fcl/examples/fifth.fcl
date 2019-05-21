@@ -1,0 +1,47 @@
+# fifth.fcl
+# Shows input of events from ROOT, filtering by EventID,
+# output of filtered events to another file.
+
+# All we need to create events is the source table
+source : {
+  # Now we have a ROOT input file
+  module_type : RootInput
+
+  # Run `art --print-description RootInput` to get a description
+  # of parameters that can be set for RootInput
+  fileNames   : ["third.art"]
+}
+
+# Because we're defining outputs in this script, we need
+# to have the physics table which defines how event will be
+# processed.
+physics : {
+  # Filter modules have a dedicated table
+  filters: {
+    # Create a filter by event id
+    myFilter: {
+      module_type: EventIDFilter
+      # Select any run, and subrun, events 2 4 and 6 through 8
+      idsToMatch: [ "*:*:2,4,6-8" ]
+    }
+  }
+
+  # filters go on trigger paths
+  fp: [ myFilter ]
+
+  # output path(s)
+  op: [ myOutput ]
+}
+
+# Use FileDumperOutput
+outputs : {
+  # `myOutput` defines the name we can use elsewhere
+  # Remember to run `art --print-description FileDumperOutput`
+  # for additional parameters that it can take.
+  myOutput : {
+    module_type: RootOutput
+    fileName: "fifth.art"
+    # Only output events passing this filter path
+    SelectEvents: [ fp ]
+  }
+}
