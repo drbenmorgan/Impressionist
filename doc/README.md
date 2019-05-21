@@ -1016,3 +1016,75 @@ See Section 7 on References in the [FHiCL Quickstart Guide](https://cdcvs.fnal.g
 for full details on this syntax.
 
 
+[`ninth.fcl`](../fcl/examples/ninth.fcl)
+-----------
+
+FHiCL parameters are mutable, i.e. can be overriden as shown earlier, by default.
+We may have use cases where we need to provide a parameter, but it should not
+be allowed to be overriden. Parameters can be marked as (effectively) "read only"
+with a special `@protect_error` syntax (see Section 10 of the [FHiCL Quickstart Guide](https://cdcvs.fnal.gov/redmine/documents/327)).
+In [fcl/examples/protected_empty_event.fcl](../fcl/examples/empty_event.fcl), we
+use this to lock down the `maxEvents` parameter:
+
+```
+BEGIN_PROLOG
+falaise : {
+  sources : {
+    empty_event: {
+      module_type: EmptyEvent
+      # Try to substitute this later will yield an error
+      maxEvents @protect_error: 10
+      firstRun: 1
+    }
+  }
+}
+END_PROLOG
+```
+
+In [fcl/examples/ninth.fcl](../fcl/examples/ninth.fcl), we try to override
+`maxEvents`:
+
+```
+#include "examples/protected_empty_event.fcl"
+
+source : {
+  @table::falaise.sources.empty_event
+}
+
+physics : {
+  op: [ myOutput ]
+}
+
+outputs : {
+  myOutput : {
+    module_type : RootOutput
+    fileName    : "third.art"
+  }
+}
+
+source.maxEvents: 75
+```
+
+but running this thorugh art will yield an error:
+
+```
+$ art -c examples/ninth.fcl
+Failed to parse the configuration file 'examples/ninth.fcl' with exception
+---- Parse error BEGIN
+  Error in assignment:
+  ---- Protection violation BEGIN
+    Part "maxEvents" of specification to be overwritten
+    "source.maxEvents" is protected on line 14 of file "<path>/examples/ninth.fcl"
+  ---- Protection violation END
+   at line 32, character 1, of file "<path>/examples/ninth.fcl"
+  
+  source.maxEvents: 75
+  ^
+---- Parse error END
+
+Art has completed and will exit with status 90.
+$
+```
+
+Art is helpful here in telling us why the error occurred, together with
+the file and line numbers related to it.
