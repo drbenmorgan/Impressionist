@@ -74,7 +74,16 @@ $
 
 You should see the famililar CMake/Make output and final success.
 If you make changes to the code, simply rerun `buildtool -bt` to reconfigure,
-recompile and retest.
+recompile and retest. If you want to reset the environment to its state _before_
+you sourced the `setup_for_development` script, simply run the `unsetup_all` command:
+
+```console
+$ unsetup_all
+unsetup -j art
+...
+unsetup -j xrootd
+$
+```
 
 Note that the first build will take time due to the externals being built. In
 addition you may see pauses at "Scanning dependencies of target Bayeux" due
