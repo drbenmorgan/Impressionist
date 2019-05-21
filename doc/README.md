@@ -725,3 +725,202 @@ the module can take. Note in particular that `fileNames` is plural, so you can
 process multiple input files in the same run.
 
 
+[`fifth.fcl`](../fcl/examples/fifth.fcl)
+-----------
+Even though we are not processing events, we can still demonstrate simple filtering
+(i.e. cuts) of events based on their Run/SubRun/Event ids. Art provides a filter module
+`EventIDFilter` with which we can do this. We'll use the file output by `third.fcl` as the input,
+and only select events with id 2,4 and 6,7,8. Looking at the output of `art --print-description EventIDFilter`:
+
+```console
+$ art --print-description EventIDFilter
+
+====================================================================================================
+
+    module_type: EventIDFilter (or "art/Framework/Modules/EventIDFilter")
+
+        provider: art
+        type    : filter
+        source  : / [ external source ] /art/Framework/Modules/EventIDFilter_module.cc
+        library : /cvmfs/larsoft.opensciencegrid.org/products/art/v3_02_04/slf7.x86_64.e17.debug/lib/libart_Framework_Modules_EventIDFilter_module.so
+
+    Allowed configuration
+    ---------------------
+
+        ## Any parameters prefaced with '#' are optional.
+
+        <module_label>: {
+
+           module_type: EventIDFilter
+
+           errorOnFailureToPut: true  # default
+
+           ## The 'idsToMatch' parameter value is a sequence of patterns,
+           ## each of which are composed three fields:
+           ## 
+           ##   <run>:<subrun>:<event>
+           ## 
+           ## Each of the run, subrun, and event fields can be represented
+           ## by a number, or set of numbers.  The '*' wildcard can be used to
+           ## represent any number, and the ',' and '-' characters can be used
+           ## to sets or ranges of numbers.  For example:
+           ## 
+           ##    "1:*:*"     // Accept Run 1, any SubRun, any Event
+           ##    "1:2:*"     // Accept Run 1, SubRun 2, any Event
+           ##    "1:2:3"     // Accept Run 1, SubRun 2, Event 3
+           ##    "1:*:4"     // Accept Run 1, any SubRun, Event 4
+           ##    "1:2-5:*"   // Accept Run 1, SubRuns 2 through 5 (inclusive), any Event
+           ##    "*:9:10,11" // Accept any Run, SubRun 9, Events 10 and 11
+           ##    "7:2-5,8:*" // Accept Run 7, SubRuns 2 through 5 (inclusive) and 8, any Event
+           ## 
+           ## Specifying multiple patterns in the sequence corresponds to a
+           ## logical OR of the patterns.  In other words, if the event in question
+           ## matches any (not all) of the patterns, the event is accepted.
+
+           idsToMatch: [
+              <string>,
+              ...
+           ]
+        }
+
+====================================================================================================
+
+$
+```
+
+To filter on this we need to add a `filters` subtable to the `physics` table and a pipeline path for this
+filter. Because of the way art handles filtering, we also look at the `RootOutput` description and see:
+
+```console
+$ art --print-description RootOutput
+...
+    Allowed configuration
+    ---------------------
+
+        ## Any parameters prefaced with '#' are optional.
+
+        <module_label>: {
+
+           module_type: RootOutput
+
+           ## The following parameter is a user-provided list
+           ## of filter paths. The default list is empty.
+
+           SelectEvents: [
+           ]
+...
+```
+
+so we also need to add the label of the processing/filtering path to `SelectEvents`. This leads to the fhicl file:
+
+```
+source : {
+  module_type : RootInput
+  fileNames   : ["third.art"]
+}
+
+physics: {
+  filters: {
+    myFilter: {
+      module_type: EventIDFilter
+      idsToMatch: [ "*:*:2,4,6-8" ]
+    }
+  }
+
+  fp: [ myFilter ]
+  op: [ myOutput ]
+}
+
+outputs: {
+  myOutput : {
+    module_type: RootOutput
+    fileName: "fifth.art"
+    SelectEvents: [ fp ]
+  }
+}
+```
+
+Running this through `art` gives:
+
+```
+$ art -c examples/fifth.fcl
+INFO: using default process_name of "DUMMY".
+%MSG-i MF_INIT_OK:  Early 21-May-2019 16:56:14 BST JobSetup
+Messagelogger initialization complete.
+%MSG
+%MSG-i FastCloning:  RootOutput:myOutput@Construction 21-May-2019 16:56:15 BST  ModuleConstruction
+Initial fast cloning configuration (from default): true
+%MSG
+%MSG-w FastCloning:  RootOutput:myOutput@Construction 21-May-2019 16:56:15 BST  ModuleConstruction
+Fast cloning deactivated due to presence of
+event selection configuration.
+%MSG
+21-May-2019 16:56:15 BST  Initiating request to open input file "third.art"
+21-May-2019 16:56:15 BST  Opened input file "third.art"
+Begin processing the 1st record. run: 1 subRun: 0 event: 1 at 21-May-2019 16:56:15 BST
+21-May-2019 16:56:16 BST  Opened output file with pattern "fifth.art"
+Begin processing the 2nd record. run: 1 subRun: 0 event: 2 at 21-May-2019 16:56:16 BST
+Begin processing the 3rd record. run: 1 subRun: 0 event: 3 at 21-May-2019 16:56:16 BST
+Begin processing the 4th record. run: 1 subRun: 0 event: 4 at 21-May-2019 16:56:16 BST
+Begin processing the 5th record. run: 1 subRun: 0 event: 5 at 21-May-2019 16:56:16 BST
+Begin processing the 6th record. run: 1 subRun: 0 event: 6 at 21-May-2019 16:56:16 BST
+Begin processing the 7th record. run: 1 subRun: 0 event: 7 at 21-May-2019 16:56:16 BST
+Begin processing the 8th record. run: 1 subRun: 0 event: 8 at 21-May-2019 16:56:16 BST
+Begin processing the 9th record. run: 1 subRun: 0 event: 9 at 21-May-2019 16:56:16 BST
+Begin processing the 10th record. run: 1 subRun: 0 event: 10 at 21-May-2019 16:56:16 BST
+21-May-2019 16:56:16 BST  Closed output file "fifth.art"
+21-May-2019 16:56:16 BST  Closed input file "third.art"
+
+TrigReport ---------- Event  Summary ------------
+TrigReport Events total = 10 passed = 5 failed = 5
+
+TrigReport ------ Modules in End-Path: end_path ------------
+TrigReport  Trig Bit#        Run    Success      Error Name
+TrigReport     0    0          5          5          0 myOutput
+
+TimeReport ---------- Time  Summary ---[sec]----
+TimeReport CPU = 0.063825 Real = 0.103124
+
+MemReport  ---------- Memory  Summary ---[base-10 MB]----
+MemReport  VmPeak = 557.638 VmHWM = 166.429
+
+Art has completed and will exit with status 0.
+
+$
+```
+
+We can see that all events were processed, but the `myOutput` module in the end path
+only ran 5 times, as expected. We can confirm that these 5 events matched out event id
+selection criteria via the `fifth_print.fcl` file:
+
+```console
+$ art -c examples/fifth_print.fcl
+INFO: using default process_name of "DUMMY".
+%MSG-i MF_INIT_OK:  Early 21-May-2019 16:57:34 BST JobSetup
+Messagelogger initialization complete.
+%MSG
+21-May-2019 16:57:34 BST  Initiating request to open input file "fifth.art"
+21-May-2019 16:57:35 BST  Opened input file "fifth.art"
+Begin processing the 1st record. run: 1 subRun: 0 event: 2 at 21-May-2019 16:57:35 BST
+Begin processing the 2nd record. run: 1 subRun: 0 event: 4 at 21-May-2019 16:57:35 BST
+Begin processing the 3rd record. run: 1 subRun: 0 event: 6 at 21-May-2019 16:57:35 BST
+Begin processing the 4th record. run: 1 subRun: 0 event: 7 at 21-May-2019 16:57:35 BST
+Begin processing the 5th record. run: 1 subRun: 0 event: 8 at 21-May-2019 16:57:35 BST
+21-May-2019 16:57:35 BST  Closed input file "fifth.art"
+
+TrigReport ---------- Event  Summary ------------
+TrigReport Events total = 5 passed = 5 failed = 0
+
+TimeReport ---------- Time  Summary ---[sec]----
+TimeReport CPU = 0.008780 Real = 0.009103
+
+MemReport  ---------- Memory  Summary ---[base-10 MB]----
+MemReport  VmPeak = 551.866 VmHWM = 182.62
+
+Art has completed and will exit with status 0.
+$
+```
+
+We see the event ids are as expected. For further info on filtering and paths, see
+the art Wiki on [paths](https://cdcvs.fnal.gov/redmine/projects/art/wiki/Paths)
+and [filtering](https://cdcvs.fnal.gov/redmine/projects/art/wiki/Filtering_events).
