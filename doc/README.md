@@ -346,3 +346,152 @@ MemReport  VmPeak = 168.993 VmHWM = 34.9266
 Art has completed and will exit with status 0.
 $
 ```
+
+`second.fcl`
+------------
+
+This script extends `first.fcl` to show how the number of events to process can be
+set in the FHiCL script. Art modules use FHiCL's [configuration validation](https://cdcvs.fnal.gov/redmine/projects/art/wiki/Configuration_validation_and_description)
+system to provide documentation of parameters supported by the module and to validate the
+supplied settings. Providing the module is known to Art, we can find out how to
+configure a given module with the `--print-description <modulename>` argument to `art`.
+For the `EmptyEvent` module, we can do:
+
+``` console
+$ art --print-description EmptyEvent
+
+====================================================================================================
+
+    module_type: EmptyEvent (or "art/Framework/Modules/EmptyEvent")
+
+        provider: art
+        source  : / [ external source ] /art/Framework/Modules/EmptyEvent_source.cc
+        library : /cvmfs/larsoft.opensciencegrid.org/products/art/v3_02_04/slf7.x86_64.e17.debug/lib/libart_Framework_Modules_EmptyEvent_source.so
+
+    Allowed configuration
+    ---------------------
+
+        ## Any parameters prefaced with '#' are optional.
+
+        source: {
+
+           module_type: EmptyEvent
+
+           maxEvents: -1  # default
+
+           maxSubRuns: -1  # default
+
+           reportFrequency: 1  # default
+
+           errorOnFailureToPut: false  # default
+
+           processingMode: "RunsSubRunsAndEvents"  # default
+
+           numberEventsInRun: -1  # default
+
+           numberEventsInSubRun: -1  # default
+
+           eventCreationDelay: 0  # default
+
+           resetEventOnSubRun: true  # default
+
+         # firstRun: <unsigned int>
+
+         # firstSubRun: <unsigned int>
+
+         # firstEvent: <unsigned int>
+
+           ## The 'timestampPlugin' parameter must be a FHiCL table
+           ## of the form:
+           ## 
+           ##   timestampPlugin: {
+           ##     plugin_type: <plugin specification>
+           ##     ...
+           ##   }
+           ## 
+           ## See the notes in art/Framework/Core/EmptyEventTimestampPlugin.h
+           ## for more details.
+
+         # timestampPlugin: << delegated >>
+        }
+
+====================================================================================================
+
+$
+```
+
+Thus to set the number of events, we add the `maxEvents` parameter to the `source:` table:
+
+```
+source: {
+  module_type : EmptyEvent
+  maxEvents   : 10
+}
+```
+
+We can run this in `art` and get 10 events generated:
+
+```console
+$ art -c examples/second.fcl
+INFO: using default process_name of "DUMMY".
+%MSG-i MF_INIT_OK:  Early 21-May-2019 16:19:53 BST JobSetup
+Messagelogger initialization complete.
+%MSG
+Begin processing the 1st record. run: 1 subRun: 0 event: 1 at 21-May-2019 16:19:54 BST
+Begin processing the 2nd record. run: 1 subRun: 0 event: 2 at 21-May-2019 16:19:54 BST
+Begin processing the 3rd record. run: 1 subRun: 0 event: 3 at 21-May-2019 16:19:54 BST
+Begin processing the 4th record. run: 1 subRun: 0 event: 4 at 21-May-2019 16:19:54 BST
+Begin processing the 5th record. run: 1 subRun: 0 event: 5 at 21-May-2019 16:19:54 BST
+Begin processing the 6th record. run: 1 subRun: 0 event: 6 at 21-May-2019 16:19:54 BST
+Begin processing the 7th record. run: 1 subRun: 0 event: 7 at 21-May-2019 16:19:54 BST
+Begin processing the 8th record. run: 1 subRun: 0 event: 8 at 21-May-2019 16:19:54 BST
+Begin processing the 9th record. run: 1 subRun: 0 event: 9 at 21-May-2019 16:19:54 BST
+Begin processing the 10th record. run: 1 subRun: 0 event: 10 at 21-May-2019 16:19:54 BST
+
+TrigReport ---------- Event  Summary ------------
+TrigReport Events total = 10 passed = 10 failed = 0
+
+TimeReport ---------- Time  Summary ---[sec]----
+TimeReport CPU = 0.003759 Real = 0.003851
+
+MemReport  ---------- Memory  Summary ---[base-10 MB]----
+MemReport  VmPeak = 168.997 VmHWM = 34.943
+
+Art has completed and will exit with status 0.
+
+$
+```
+
+You can still pass the `-n` command line argument to override the number of events.
+
+Part of the FHiCL validation system is helpful error messaging. For example,
+if we spell the name of a parameter incorrectly, `art` will point to the location
+and cause of the error:
+
+``` console
+$ art -c examples/second_error.fcl
+INFO: using default process_name of "DUMMY".
+%MSG-i MF_INIT_OK:  Early 21-May-2019 16:21:18 BST JobSetup
+Messagelogger initialization complete.
+%MSG
+%MSG-s ArtException:  Early 21-May-2019 16:21:18 BST JobSetup
+cet::exception caught in art
+---- Configuration BEGIN
+  
+  
+  Module label: source
+  module_type : EmptyEvent
+  
+  Any parameters prefaced with '#' are optional.
+  Unsupported parameters:
+  
+   + maxEvent                       [ /home/physics/phsdbc/sandbox/com.github/SuperNEMO-DBD/Impressionist.build/fcl/examples/second_error.fcl:14 ]
+  
+---- Configuration END
+%MSG
+Art has completed and will exit with status 9.
+$
+```
+
+Try adding some of the other parameters listed in the documentation for `EmptyEvent` and see what happens!
+
