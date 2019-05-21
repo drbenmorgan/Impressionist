@@ -216,3 +216,17 @@ This output is quite involved, so we defer explaining it until we actually write
 own scripts. Try using ``--print-description`` on some of the other modules and services.
 Later on when we write our own modules, we'll see how to add this documentation
 for them.
+
+
+Writing Pipeline Scripts with FHiCL
+===================================
+Art's event processing pipeline is driven by the user through a script written in
+FHiCL (**F**ermilab **Hi**erarchical **C**onfiguration **L**anguage, pronounced "fickle").
+[FHiCL's grammar](https://cdcvs.fnal.gov/redmine/attachments/29136/quick_start_v3.pdf) is
+similar to JSON/YAML, with the advantage over _Falaise_'s `datatools::properties` language
+that it is _hierarchical_ by design, and _composable_ (an overall pipeline can be "compiled"
+from several "unit" scripts).
+
+In the following sections we'll walk through the build up of a FHiCL script for _art_, illustrating
+the schema for defining services, modules, pipeline, and I/O. All of these examples can be browsed
+under the [top-level fcl/examples directory](../fcl/examples).
