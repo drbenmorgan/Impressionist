@@ -988,3 +988,31 @@ changes to a few reconstruction parameters.
 Note that FHiCL does require that all overriden parameters be "fully
 qualified". See Section 5.4 "Table Values" of the [FHiCL Quickstart Guide](https://cdcvs.fnal.gov/redmine/documents/327)
 for the strict meaning of this.
+
+[`eighth.fcl`](../fcl/examples/eighth.fcl)
+------------
+Straight inclusion of a "bare" script is allowed by the FHiCL grammar, but it is
+recommended to package scripts for inclusion as "Prologs". Section 8 on Prologs
+in the [FHiCL Quickstart Guide](https://cdcvs.fnal.gov/redmine/documents/327)
+covers these in more detail, the main message being that they help to keep
+processing clean and prevent name clashes.
+
+In [fcl/examples/empty_event.fcl](../fcl/examples/empty_event.fcl), we've put the
+configuration for the `EmptyEvent` module as a nested table inside a prolog.
+In [fcl/examples/eighth.fcl](../fcl/examples/eighth.fcl), we include this script
+and use FHiCL's "reference" mechanism to use it as our source:
+
+```
+#include "examples/empty_event.fcl"
+
+source : {
+  @table::falaise.sources.empty_event
+}
+
+# ... rest of script
+```
+
+See Section 7 on References in the [FHiCL Quickstart Guide](https://cdcvs.fnal.gov/redmine/documents/327)
+for full details on this syntax.
+
+
