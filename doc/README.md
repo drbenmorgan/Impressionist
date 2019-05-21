@@ -277,3 +277,72 @@ compile/test cycle uses an FHiCL scripts supplied by the project.  As we'll see 
 also enables the _composability_ of FHiCL scripts by providing a C++ header like lookup.
 
 
+`first.fcl`
+-----------
+The input to _art_'s pipeline is defined by the `source` [table](https://cdcvs.fnal.gov/redmine/projects/art/wiki/ART_framework_parameters) in the script.
+As we don't have input files or other event source yet, we can use _art_'s
+builtin `EmptyEvent` module to create, well, empty events. In the `source` table,
+we use the `module_type` parameter to define `EmptyEvent` as the module type,
+and leave any further parameters which unset (`EmptyEvent` provides sensible defaults for us):
+
+```
+source : {
+  module_type : EmptyEvent
+}
+```
+
+We can now pass this script to `art` using the `-c` argument:
+
+```console
+$ art -c examples/first.fcl
+INFO: using default process_name of "DUMMY".
+%MSG-i MF_INIT_OK:  Early 21-May-2019 16:11:38 BST JobSetup
+Messagelogger initialization complete.
+%MSG
+Begin processing the 1st record. run: 1 subRun: 0 event: 1 at 21-May-2019 16:11:38 BST
+
+TrigReport ---------- Event  Summary ------------
+TrigReport Events total = 1 passed = 1 failed = 0
+
+TimeReport ---------- Time  Summary ---[sec]----
+TimeReport CPU = 0.003141 Real = 0.003227
+
+MemReport  ---------- Memory  Summary ---[base-10 MB]----
+MemReport  VmPeak = 168.993 VmHWM = 34.9266
+
+Art has completed and will exit with status 0.
+$
+```
+
+Here, only one event has been generated. We can change this on the command line
+using the `-n` argument. For example, to run 10 events:
+
+``` console
+$ art -c examples/first.fcl -n 10
+INFO: using default process_name of "DUMMY".
+%MSG-i MF_INIT_OK:  Early 21-May-2019 16:13:00 BST JobSetup
+Messagelogger initialization complete.
+%MSG
+Begin processing the 1st record. run: 1 subRun: 0 event: 1 at 21-May-2019 16:13:00 BST
+Begin processing the 2nd record. run: 1 subRun: 0 event: 2 at 21-May-2019 16:13:00 BST
+Begin processing the 3rd record. run: 1 subRun: 0 event: 3 at 21-May-2019 16:13:00 BST
+Begin processing the 4th record. run: 1 subRun: 0 event: 4 at 21-May-2019 16:13:00 BST
+Begin processing the 5th record. run: 1 subRun: 0 event: 5 at 21-May-2019 16:13:00 BST
+Begin processing the 6th record. run: 1 subRun: 0 event: 6 at 21-May-2019 16:13:00 BST
+Begin processing the 7th record. run: 1 subRun: 0 event: 7 at 21-May-2019 16:13:00 BST
+Begin processing the 8th record. run: 1 subRun: 0 event: 8 at 21-May-2019 16:13:00 BST
+Begin processing the 9th record. run: 1 subRun: 0 event: 9 at 21-May-2019 16:13:00 BST
+Begin processing the 10th record. run: 1 subRun: 0 event: 10 at 21-May-2019 16:13:00 BST
+
+TrigReport ---------- Event  Summary ------------
+TrigReport Events total = 10 passed = 10 failed = 0
+
+TimeReport ---------- Time  Summary ---[sec]----
+TimeReport CPU = 0.004014 Real = 0.004123
+
+MemReport  ---------- Memory  Summary ---[base-10 MB]----
+MemReport  VmPeak = 168.993 VmHWM = 34.9266
+
+Art has completed and will exit with status 0.
+$
+```
