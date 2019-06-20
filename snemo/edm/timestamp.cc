@@ -16,10 +16,14 @@ namespace snemo {
   namespace datamodel {
 
     // serial tag for datatools::i_serializable interface :
-    DATATOOLS_SERIALIZATION_SERIAL_TAG_IMPLEMENTATION(timestamp, "snemo::datamodel::timestamp")
+    DATATOOLS_SERIALIZATION_SERIAL_TAG_IMPLEMENTATION(
+      timestamp,
+      "snemo::datamodel::timestamp")
 
-    const int64_t timestamp::INVALID_SECONDS = std::numeric_limits<int64_t>::min();
-    const int64_t timestamp::INVALID_PICOSECONDS = std::numeric_limits<int64_t>::min();
+    const int64_t timestamp::INVALID_SECONDS =
+      std::numeric_limits<int64_t>::min();
+    const int64_t timestamp::INVALID_PICOSECONDS =
+      std::numeric_limits<int64_t>::min();
 
     const char timestamp::IO_FORMAT_OPEN = '[';
     const char timestamp::IO_FORMAT_SEP = ':';
@@ -40,7 +44,8 @@ namespace snemo {
     bool
     timestamp::is_valid() const
     {
-      return _seconds_ != INVALID_SECONDS && _picoseconds_ != INVALID_PICOSECONDS;
+      return _seconds_ != INVALID_SECONDS &&
+             _picoseconds_ != INVALID_PICOSECONDS;
     }
 
     void
@@ -54,7 +59,8 @@ namespace snemo {
     timestamp::compare(const timestamp& ts_) const
     {
       DT_THROW_IF(!is_valid(), std::logic_error, "Invalid timestamp (this) !");
-      DT_THROW_IF(!ts_.is_valid(), std::logic_error, "Invalid timestamp (argument) !");
+      DT_THROW_IF(
+        !ts_.is_valid(), std::logic_error, "Invalid timestamp (argument) !");
       if (_seconds_ < ts_._seconds_)
         return -1;
       if (_seconds_ > ts_._seconds_)

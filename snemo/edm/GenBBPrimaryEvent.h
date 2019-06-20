@@ -12,7 +12,8 @@ namespace snemo {
   public:
     GenBBPrimaryEvent() = default;
     virtual ~GenBBPrimaryEvent(){};
-    GenBBPrimaryEvent(const genbb::primary_event& p) : genbb::primary_event(p) {}
+    GenBBPrimaryEvent(const genbb::primary_event& p) : genbb::primary_event(p)
+    {}
   };
 } // namespace snemo
 

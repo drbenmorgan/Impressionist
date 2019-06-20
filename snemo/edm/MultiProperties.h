@@ -12,7 +12,9 @@ namespace snemo {
   public:
     MultiProperties() = default;
     virtual ~MultiProperties(){};
-    MultiProperties(const datatools::multi_properties& p) : datatools::multi_properties(p) {}
+    MultiProperties(const datatools::multi_properties& p)
+      : datatools::multi_properties(p)
+    {}
   };
 } // namespace snemo
 

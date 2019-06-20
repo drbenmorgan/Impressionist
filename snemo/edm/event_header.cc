@@ -8,8 +8,9 @@ namespace snemo {
   namespace datamodel {
 
     // Serial tag for datatools::i_serializable interface :
-    DATATOOLS_SERIALIZATION_SERIAL_TAG_IMPLEMENTATION(event_header,
-                                                      "snemo::datamodel::event_header")
+    DATATOOLS_SERIALIZATION_SERIAL_TAG_IMPLEMENTATION(
+      event_header,
+      "snemo::datamodel::event_header")
 
     // static
     const std::string&
@@ -132,8 +133,8 @@ namespace snemo {
         _id_.tree_dump(out_, "", indent_oss.str());
       }
 
-      out_ << indent << datatools::i_tree_dumpable::tag << "Timestamp : " << _timestamp_
-           << std::endl;
+      out_ << indent << datatools::i_tree_dumpable::tag
+           << "Timestamp : " << _timestamp_ << std::endl;
 
       out_ << indent << datatools::i_tree_dumpable::tag << "Properties : ";
       if (_properties_.size() == 0) {

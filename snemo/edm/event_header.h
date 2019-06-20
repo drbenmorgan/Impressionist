@@ -33,7 +33,8 @@ namespace snemo {
 
   namespace datamodel {
 
-    /// \brief A event header class to be embedded as a bank in a 'datatools::things' event record.
+    /// \brief A event header class to be embedded as a bank in a
+    /// 'datatools::things' event record.
     class event_header : public datatools::i_serializable,
                          public datatools::i_clear,
                          public datatools::i_tree_dumpable {
@@ -119,7 +120,8 @@ namespace snemo {
 } // end of namespace snemo
 
 #include <boost/serialization/export.hpp>
-BOOST_CLASS_EXPORT_KEY2(snemo::datamodel::event_header, "snemo::datamodel::event_header")
+BOOST_CLASS_EXPORT_KEY2(snemo::datamodel::event_header,
+                        "snemo::datamodel::event_header")
 
 // Class version:
 #include <boost/serialization/version.hpp>
