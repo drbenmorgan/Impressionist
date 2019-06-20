@@ -1,0 +1,55 @@
+<!--  Include art::Wrapper lines for objects that we would like to put  -->
+<!--  into art::Event -->
+<!--  Include the non-wrapper lines for all objects on the art::Wrapper -->
+<!--  lines and for all objects that are data members of those objects.-->
+<!--  See https://cdcvs.fnal.gov/redmine/projects/art/wiki/Data_Product_Dictionary_How-To -->
+
+<lcgdict>
+  <class name="datatools::i_serializable" classVersion="10"/>
+  <class name="datatools::i_tree_dumpable" classVersion="10"/>
+  <class name="datatools::i_clear" classVersion="10"/>
+  <class name="datatools::i_cloneable" classVersion="10"/>
+
+  <class name="datatools::event_id" classVersion="10"/>
+
+  <!-- Properties: low->high -->
+  <class name="datatools::properties::data" classVersion="10"/>
+  <class name="std::map<std::string, datatools::properties::data>"/>
+  <class name="datatools::properties" classVersion="10">
+    <field name="_key_validator_" transient="true"/>
+  </class>
+  <class name="art::Wrapper<datatools::properties>"/>
+
+  <!-- Multi_Properties: low->high -->
+  <class name="datatools::multi_properties::entry" classVersion="10"/>
+  <class name="std::map<std::string, datatools::multi_properties::entry>" classVersion="10"/>
+  <class name="std::list<datatools::multi_properties::entry*>" classVersion="10"/>
+  <class name="datatools::multi_properties" classVersion="10"/>
+  <class name="snemo::MultiProperties" classVersion="10"/>
+  <class name="art::Wrapper<snemo::MultiProperties>"/>
+
+  <!-- MCTools types: low->high -->
+  <class name="geomtools::geom_id" classVersion="10"/>
+  <class name="geomtools::base_hit" classVersion="10"/>
+  <class name="mctools::base_step_hit" classVersion="10"/>
+
+  <class name="snemo::StepHit" classVersion="10"/>
+  <class name="snemo::StepHitCollection" classVersion="10"/>
+  <class name="art::Wrapper<snemo::StepHitCollection>"/>
+
+  <!-- GenBB types -->
+  <class name="genbb::primary_particle" classVersion="10"/>
+  <class name="std::list<genbb::primary_particle>" classVersion="10"/>
+  <class name="genbb::primary_event" classVersion="10"/>
+
+  <class name="snemo::GenBBPrimaryEvent" classVersion="10"/>
+  <class name="art::Wrapper<snemo::GenBBPrimaryEvent>"/>
+
+  <!-- Reconstruction level types -->
+  <class name="snemo::CalorimeterHit" classVersion="10"/>
+  <class name="snemo::CalorimeterHitCollection" classVersion="10"/>
+  <class name="art::Wrapper<snemo::CalorimeterHitCollection>" classVersion="10"/>
+  <class name="snemo::GeigerHit" classVersion="10"/>
+  <class name="snemo::GeigerHitCollection" classVersion="10"/>
+  <class name="art::Wrapper<snemo::GeigerHitCollection>" classVersion="10"/>
+</lcgdict>

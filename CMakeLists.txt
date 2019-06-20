@@ -18,6 +18,13 @@ cet_set_compiler_flags(
 include(externals/bayeux.cmake)
 include(externals/gitconddb.cmake)
 
+# Find other needed packages
+find_package(art 3 REQUIRED)
+find_package(canvas_root_io REQUIRED)
+
+# Set them up...
+include(ArtDictionary)
+
 # SNemo
 add_subdirectory(snemo)
 
