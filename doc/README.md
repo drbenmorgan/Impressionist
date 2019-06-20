@@ -14,10 +14,10 @@ it provides many features **not** supported by _Falaise_, namely:
 The primary point of contact for users is the `art` executable which, like
 `flreconstruct`, is run by supplying input/output source(s)/sink(s) for
 data together which a script defining the workflow to be performed on that
-data. 
+data.
 
-Though the sections below are a largely self-contained introduction to _art_, they 
-should be consulted together with the main _art_ framework and scripting 
+Though the sections below are a largely self-contained introduction to _art_, they
+should be consulted together with the main _art_ framework and scripting
 documentation available at:
 
 - [Overall Art Guide](https://cdcvs.fnal.gov/redmine/projects/art/wiki)
@@ -41,7 +41,7 @@ art 3.02.04
 $
 ```
 
-If `art <VERSIONNUMBER>` is printed, you're good to go. If there are any issues here, 
+If `art <VERSIONNUMBER>` is printed, you're good to go. If there are any issues here,
 please raise an [Issue](https://github.com/SuperNEMO-DBD/Impressionist/issues)
 or drop @drbenmorgan a mail.
 
@@ -78,7 +78,7 @@ in the pipeline script.
 Just like Falaise, Art's functionality is implemented as a pipeline whose input,
 processing, and output are controlled through a sequence of modules defined by
 the FHiCL script. Art also implements the concept of "Services" that provide information
-that is not strictly Event or Run level (for example, logging, profiling). These too 
+that is not strictly Event or Run level (for example, logging, profiling). These too
 can be configured by the FHiCL script.
 
 Getting Help on Modules and Services
@@ -93,7 +93,7 @@ including those for SuperNEMO, by using the `--print-available <type>` argument.
 - `module`: A module that handles processing of event data.
 - `service`: A service living outside the pipeline and which may be accessed
   by `source` and `module` modules.
-  
+
 As of `art` 3.2.4, each of these prints the following:
 
 ```console
@@ -144,7 +144,7 @@ $
 ```
 
 We'll see in the coming sections how to use these in a pipeline script. Art's
-scripting system provides descriptions and help on the configuration parameters 
+scripting system provides descriptions and help on the configuration parameters
 available or required by a given module or service. For example, one of the first modules we'll
 use is the `EmptyEvent` source module, and we can see how to configure this
 using:
@@ -195,12 +195,12 @@ $ art --print-description EmptyEvent
 
            ## The 'timestampPlugin' parameter must be a FHiCL table
            ## of the form:
-           ## 
+           ##
            ##   timestampPlugin: {
            ##     plugin_type: <plugin specification>
            ##     ...
            ##   }
-           ## 
+           ##
            ## See the notes in art/Framework/Core/EmptyEventTimestampPlugin.h
            ## for more details.
 
@@ -239,7 +239,7 @@ Checking the output of `art --help`, we can see that to pass a script to `art` v
 
 ```console
 $ art -c examples/zero.fcl
-INFO: provided configuration file 'examples/zero.fcl' is empty: 
+INFO: provided configuration file 'examples/zero.fcl' is empty:
 using minimal defaults and command-line options.
 INFO: using default process_name of "DUMMY".
 %MSG-i MF_INIT_OK:  Early 21-May-2019 15:33:59 BST JobSetup
@@ -271,9 +271,9 @@ Art will search for the script we supply using the following rules:
     - The first existing matched file being used, or
     - Execution will be stopped if no existing matched file is found
 
-The reason that suppliying `examples/zero.fcl` as a relative path works is that is has been found through searching 
+The reason that suppliying `examples/zero.fcl` as a relative path works is that is has been found through searching
 `FHICL_FILE_PATH`. Impressionist sets this as part of its `setup_for_development` script so that running during the
-compile/test cycle uses an FHiCL scripts supplied by the project.  As we'll see later, the use of `FHICL_FILE_PATH` 
+compile/test cycle uses an FHiCL scripts supplied by the project.  As we'll see later, the use of `FHICL_FILE_PATH`
 also enables the _composability_ of FHiCL scripts by providing a C++ header like lookup.
 
 
@@ -403,12 +403,12 @@ $ art --print-description EmptyEvent
 
            ## The 'timestampPlugin' parameter must be a FHiCL table
            ## of the form:
-           ## 
+           ##
            ##   timestampPlugin: {
            ##     plugin_type: <plugin specification>
            ##     ...
            ##   }
-           ## 
+           ##
            ## See the notes in art/Framework/Core/EmptyEventTimestampPlugin.h
            ## for more details.
 
@@ -465,7 +465,7 @@ $
 You can still pass the `-n` command line argument to override the number of events.
 
 Part of the FHiCL validation system is helpful error messaging. For example,
-if we spell the name of a parameter incorrectly as in [fcl/examples/second_error.fcl](../fcl/examples/second_error.fcl), 
+if we spell the name of a parameter incorrectly as in [fcl/examples/second_error.fcl](../fcl/examples/second_error.fcl),
 `art` will point to the location and cause of the error:
 
 ``` console
@@ -477,16 +477,16 @@ Messagelogger initialization complete.
 %MSG-s ArtException:  Early 21-May-2019 16:21:18 BST JobSetup
 cet::exception caught in art
 ---- Configuration BEGIN
-  
-  
+
+
   Module label: source
   module_type : EmptyEvent
-  
+
   Any parameters prefaced with '#' are optional.
   Unsupported parameters:
-  
+
    + maxEvent                       [ /home/physics/phsdbc/sandbox/com.github/SuperNEMO-DBD/Impressionist.build/fcl/examples/second_error.fcl:14 ]
-  
+
 ---- Configuration END
 %MSG
 Art has completed and will exit with status 9.
@@ -552,9 +552,9 @@ $
 ```
 
 We can also define the filename in the FHiCL file using the
-`outputs` table. Note the plural as unlike `source` we can, if we wish, 
-have multiple output modules (for example, selected/rejected event samples). 
-However, because `outputs` is part of processing because of this we must also add 
+`outputs` table. Note the plural as unlike `source` we can, if we wish,
+have multiple output modules (for example, selected/rejected event samples).
+However, because `outputs` is part of processing because of this we must also add
 the `physics` table so we can declare the use of the output module:
 
 ```
@@ -581,8 +581,8 @@ order, and configuration parameters are defined. In `physics` we've added
 a FHiCL list `op` to define the modules to be processed, in this case the
 `myOutput` module we define later in the `outputs` table.
 The name `op` is arbitrary and can be anything you like, as Art's syntax
-can separate these lists from other settings as we'll see later. 
-This seemingly odd way of defining things will help later on when we define 
+can separate these lists from other settings as we'll see later.
+This seemingly odd way of defining things will help later on when we define
 more complex processing paths and multiple outputs.
 The script can be run like the others:
 
@@ -757,14 +757,14 @@ $ art --print-description EventIDFilter
 
            ## The 'idsToMatch' parameter value is a sequence of patterns,
            ## each of which are composed three fields:
-           ## 
+           ##
            ##   <run>:<subrun>:<event>
-           ## 
+           ##
            ## Each of the run, subrun, and event fields can be represented
            ## by a number, or set of numbers.  The '*' wildcard can be used to
            ## represent any number, and the ',' and '-' characters can be used
            ## to sets or ranges of numbers.  For example:
-           ## 
+           ##
            ##    "1:*:*"     // Accept Run 1, any SubRun, any Event
            ##    "1:2:*"     // Accept Run 1, SubRun 2, any Event
            ##    "1:2:3"     // Accept Run 1, SubRun 2, Event 3
@@ -772,7 +772,7 @@ $ art --print-description EventIDFilter
            ##    "1:2-5:*"   // Accept Run 1, SubRuns 2 through 5 (inclusive), any Event
            ##    "*:9:10,11" // Accept any Run, SubRun 9, Events 10 and 11
            ##    "7:2-5,8:*" // Accept Run 7, SubRuns 2 through 5 (inclusive) and 8, any Event
-           ## 
+           ##
            ## Specifying multiple patterns in the sequence corresponds to a
            ## logical OR of the patterns.  In other words, if the event in question
            ## matches any (not all) of the patterns, the event is accepted.
@@ -932,7 +932,7 @@ As noted above, FHiCL scripts are _composable_ from a set of smaller scripts. Th
 is implemented in the same way as C/C++ headers, so effectively FHiCL scripts can "#include" others,
 using the `FHICL_FILE_PATH` just like the header search path of a compiler.
 
-The exact syntax of this feature is discussed in Section 9 of the [FHiCL Quickstart Guide](https://cdcvs.fnal.gov/redmine/documents/327). To illustrate the simplest use, we can reproduce 
+The exact syntax of this feature is discussed in Section 9 of the [FHiCL Quickstart Guide](https://cdcvs.fnal.gov/redmine/documents/327). To illustrate the simplest use, we can reproduce
 the behaviour of the `third.fcl` script via including it in a new, one line script:
 
 ```
@@ -1077,7 +1077,7 @@ Failed to parse the configuration file 'examples/ninth.fcl' with exception
     "source.maxEvents" is protected on line 14 of file "<path>/examples/ninth.fcl"
   ---- Protection violation END
    at line 32, character 1, of file "<path>/examples/ninth.fcl"
-  
+
   source.maxEvents: 75
   ^
 ---- Parse error END
@@ -1088,3 +1088,12 @@ $
 
 Art is helpful here in telling us why the error occurred, together with
 the file and line numbers related to it.
+
+Using Art for SuperNEMO
+=======================
+
+The preceeding examples cover the general concepts of scripting data flow
+with art using its builtin functionality and FHiCL. SuperNEMO naturally
+requires additional code to describe its data and processing models, and
+these are covered in [the next document](ImpresssionistArt.md).
+
