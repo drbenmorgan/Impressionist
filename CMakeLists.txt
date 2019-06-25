@@ -21,6 +21,7 @@ include(externals/gitconddb.cmake)
 # Find other needed packages
 find_package(art 3 REQUIRED)
 find_package(canvas_root_io REQUIRED)
+find_package(art_root_io REQUIRED)
 find_package(ROOT REQUIRED)
 
 # Set them up...

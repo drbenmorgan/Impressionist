@@ -207,5 +207,135 @@ for more information on these.
 
 Accessing FLSimulate Data Products in Art Modules
 =================================================
-Next...
+With data now present in the Events, downstream modules can consume
+and filter on these data, or use them to produce further data products.
+
+Consuming Data and Producing Plots with TFileService
+----------------------------------------------------
+The simplest model of data consumption is a so-called "Analyzer" module
+which has read-only access to Run, Subrun, and Event data products.
+A common use of an Analyzer module is to accumulate data into histograms
+for later fitting/analysis, so they are often used with Art's `TFileService`. See the art Wiki's [Guide to writing and using services](https://cdcvs.fnal.gov/redmine/projects/art/wiki/Guide_to_writing_and_using_services) for
+more details, but their use is almost identical to Bayeux's DPP services,
+albeit easier! The implementation for our `ExSDAnalyzer` module
+can be found in [snemo/examples/ExSDAnalyzer.cc](../snemo/examples/ExSDAnalyzer.cc), with the build declaration in [snemo/examples/CMakeLists.txt](../snemo/examples/CMakeLists.txt).
+
+The core things to note about the implementation are:
+
+1. Inheritance from `art::SharedAnalyzer` to support multithreading with
+   `TFileService`:
+
+   - https://cdcvs.fnal.gov/redmine/projects/art/wiki/Module_threading_types
+   - https://cdcvs.fnal.gov/redmine/projects/art/wiki/TFileService#Using-TFileService-in-multi-threaded-art-jobs
+
+2. Use of `art::InputTag` and `art::ProductToken` to declare the data
+   products the module consumes and help users, and art, track and detect
+   data product dependencies:
+
+   - https://cdcvs.fnal.gov/redmine/projects/art/wiki/Declaring_products_to_consume
+
+3. Use of `serialize` in `ExSDAnalyzer`s constructor to prevent data races:
+
+   - https://cdcvs.fnal.gov/redmine/projects/art/wiki/TFileService#Using-TFileService-in-multi-threaded-art-jobs
+
+4. Use of the `registerFileSwitchCallback` to gracefully allow file switching (e.g. you run over a single input file of 1000 events, but write your analysis objects to 10 files of 100 events each).
+
+  - https://cdcvs.fnal.gov/redmine/projects/art/wiki/TFileService#Preparing-modules-for-file-switching-art-210-and-newer
+
+5. Use of `TFileService` and `TFileDirectory` to make a directory tree
+   of ROOT objects.
+
+The module is built as part of Impressionist, and so can be queried
+just as other modules:
+
+```console
+$ art --print-description ExSDAnalyzer
+
+====================================================================================================
+
+    module_type: ExSDAnalyzer (or "snemo/examples/ExSDAnalyzer")
+
+        provider: user
+        type    : analyzer
+        source  : <system_specific>/Impressionist.git/snemo/examples/ExSDAnalyzer_module.cc
+        library : <system_specific>/Impressionist.build/lib/libsnemo_examples_ExSDAnalyzer_module.so
+
+    Allowed configuration
+    ---------------------
+
+        [ None provided ]
+
+====================================================================================================
+```
+
+To use the module with Art, the following FHiCL script is provided
+in [fcl/snemo/examples/sdanalyzer_t.fcl](../fcl/snemo/examples/sdanalyzer_t.fcl):
+
+```
+source: {
+  module_type : BrioInput
+}
+
+physics: {
+  # Analyzers have their own table
+  analyzers: {
+    myanalyzer: {
+      module_type: ExSDAnalyzer
+    }
+  }
+
+  # Analyzers go in an End Path
+  outputPath: [ myanalyzer ]
+}
+
+# Must declare the TFileService to enable it
+services: {
+  TFileService: {
+    # Write all output from any analyzer module here
+    fileName: "SDAnalyzerTest.root"
+  }
+}
+```
+
+You can see that Analyzer modules are declared and configured in their
+own `analyzers` table under the main processing `physics` table. Analyzers
+are "event observing" (i.e. event read-only) so go on an end path,
+though no entry in the `output` table is required. For more on
+event processing paths in art, see the [wiki page on Paths](https://cdcvs.fnal.gov/redmine/projects/art/wiki/Paths).
+Finally, to enable use of the `TFileService`, our script must add an
+entry for it under the main `services` table. At minimum, we must supply
+the `fileName` parameter for the ROOT file our objects will be written
+to. You can run `art --print-description TFileService` to find more options.
+Assuming you have an `flsimulate` BRIO file, you can run the analyzer
+over it using:
+
+```console
+$ art -s /my/flsimulate/file.brio -c sdanalyzer_t.fcl
+...
+$ ls
+... SDAnalyzerTest.root ...
+```
+
+You can open and browse the ROOT file as normal. Note the directory
+created in the file includes the module label, in this case `myanalyzer`.
+This means that many modules can use `TFileService`, and a nicely
+arranged TFile/TDirectory structure can be created.
+
+The file output by `TFileService` is *independent* of the primary
+art output file, so you can do:
+
+```console
+$ art -s /my/flsimulate/file.brio -c sdanalyzer_t.fcl -o events.art
+...
+$ ls
+... events.art SDAnalyzerTest.root ...
+```
+
+This can be useful for producing summary data for more detailed processing,
+e.g. data quality metrics for reconstruction whilst running the
+reconstruction. However, in some cases it may be more appropriate to
+use the `Run` or  `SubRun` products to store such summaries so they
+become part of the processing Provenance.
+
+
 
