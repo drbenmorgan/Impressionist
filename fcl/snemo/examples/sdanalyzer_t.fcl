@@ -1,0 +1,25 @@
+source: {
+  module_type : BrioInput
+}
+
+physics: {
+  # Analyzers have their own table
+  analyzers: {
+    myanalyzer: {
+      module_type: ExSDAnalyzer
+    }
+  }
+
+  # Analyzers go in an End Path
+  outputPath: [ myanalyzer ]
+}
+
+# Must declare the TFileService to enable it
+services: {
+  TFileService: {
+    # Write all output from any analyzer module here
+    fileName: "SDAnalyzerTest.root"
+  }
+}
+
+

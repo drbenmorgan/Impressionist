@@ -15,6 +15,7 @@ target_link_libraries(snemo_edm
   PUBLIC
     Bayeux::Bayeux
     Boost::serialization
+    ROOT::Core
   )
 
 # Create the Art dictionary so we can store Bayeux types directly
@@ -23,3 +24,6 @@ target_link_libraries(snemo_edm
 include_directories(${Bayeux_INCLUDE_DIRS})
 art_dictionary(DICTIONARY_LIBRARIES Bayeux::Bayeux)
 
+
+# Now the module
+simple_plugin(BrioInput "source" Bayeux::Bayeux snemo_edm)

@@ -80,6 +80,13 @@ test "${exit_now}" = "true" && return 1
 
 # add lib to LD_LIBRARY_PATH
 source $CETBUILDTOOLS_DIR/bin/set_dev_lib
+
+# ADDED BY IMPRESSIONIST
+# - Make sure ROOT can find "products" built via ExternalProject
+setenv ROOT_INCLUDE_PATH ${CETPKG_BUILD}/IMPExternals/include:${CETPKG_BUILD}/IMPExternals/include/bayeux:${ROOT_INCLUDE_PATH}
+setenv LD_LIBRARY_PATH ${CETPKG_BUILD}/IMPExternals/lib:${LD_LIBRARY_PATH}
+# ------
+
 # add bin to path
 source $CETBUILDTOOLS_DIR/bin/set_dev_bin
 # set FHICL_FILE_PATH
