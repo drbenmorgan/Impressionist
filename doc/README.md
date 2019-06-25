@@ -1095,5 +1095,5 @@ Using Art for SuperNEMO
 The preceeding examples cover the general concepts of scripting data flow
 with art using its builtin functionality and FHiCL. SuperNEMO naturally
 requires additional code to describe its data and processing models, and
-these are covered in [the next document](ImpresssionistArt.md).
+these are covered in [the next document](ImpressionistArt.md).
 
