@@ -63,5 +63,7 @@ add_library(Bayeux::Bayeux UNKNOWN IMPORTED)
 set_property(TARGET Bayeux::Bayeux PROPERTY IMPORTED_LOCATION ${Bayeux_LIBRARY})
 set_property(TARGET Bayeux::Bayeux PROPERTY INTERFACE_INCLUDE_DIRECTORIES "${Bayeux_INCLUDE_DIRS}")
 set_property(TARGET Bayeux::Bayeux PROPERTY INTERFACE_LINK_LIBRARIES "${Boost_LIBRARIES}")
+# Because Bayeux doesn't export its usage requirements properly
+set_property(TARGET Bayeux::Bayeux PROPERTY INTERFACE_COMPILE_DEFINITIONS BOOST_MATH_DISABLE_STD_FPCLASSIFY)
 
 add_dependencies(Bayeux::Bayeux BAYEUX_EP)
