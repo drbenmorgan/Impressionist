@@ -1,0 +1,3 @@
+include_directories(${SNRawDataProducts_INCLUDE_DIRS})
+
+art_dictionary(DICTIONARY_LIBRARIES SNRawDataProducts::SNRawDataProducts)

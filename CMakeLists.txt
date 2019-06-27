@@ -23,7 +23,12 @@ macro(find_package)
 endmacro()
 include(externals/bayeux.cmake)
 include(externals/gitconddb.cmake)
+
+# RDM lib, plus helper variable because rootcling doesn't grok
+# CMake genexes
 add_subdirectory(externals/SNRawDataProducts)
+set(SNRawDataProducts_INCLUDE_DIRS ${PROJECT_SOURCE_DIR}/externals/SNRawDataProducts)
+
 
 # Find directly needed packages
 find_package(art 3 REQUIRED)

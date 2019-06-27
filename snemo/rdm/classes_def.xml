@@ -1,0 +1,10 @@
+<lcgdict>
+  <!-- Deps from low->high -->
+  <!-- libsnemo_edm provides the Bayeux bindings-->
+
+  <!-- Trigger Record -->
+  <class name="snfee::data::has_trigger_id_interface" classVersion="10"/>
+  <enum name="snfee::data::trigger_mode_type" classVersion="10"/>
+  <class name="snfee::data::trigger_record" classVersion="10"/>
+  <class name="art::Wrapper<snfee::data::trigger_record>" classVersion="10"/>
+</lcgdict>
