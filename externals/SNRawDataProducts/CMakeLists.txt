@@ -99,6 +99,9 @@ target_include_directories(SNRawDataProducts PUBLIC
 target_link_libraries(SNRawDataProducts PUBLIC Bayeux::Bayeux Boost::date_time)
 #ROOT::RIO)
 
+# Alias to allow use as subproject
+add_library(SNRawDataProducts::SNRawDataProducts ALIAS SNRawDataProducts)
+
 # Configure build time ROOT setup script
 configure_file("setupSNRawDataProducts.C.in" "setupSNRawDataProducts.C" @ONLY)
 
