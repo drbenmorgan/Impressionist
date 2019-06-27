@@ -152,6 +152,9 @@ namespace snfee {
 
       /// \brief SAMLONG channel data record (post-data)
       struct channel_data_record {
+        channel_data_record() = default;
+        virtual ~channel_data_record() = default;
+
         /// Check if low-threshold (LT) bit is activated
         bool is_lt() const;
 
