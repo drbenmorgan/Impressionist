@@ -1,0 +1,274 @@
+// snfee/snfee.cc - Implementation of SNFEE init function
+//
+// Copyright (c) 2018 by François Mauger <mauger@lpccaen.in2p3.fr>
+//
+// This file is part of SNFrontEndElectronics.
+//
+// SNFrontEndElectronics is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// SNFrontEndElectronics is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with SNFrontEndElectronics. If not, see <http://www.gnu.org/licenses/>.
+
+// Ourselves:
+#include "snfee/snfee.h"
+
+// Third party
+// - Bayeux
+#include <bayeux/bayeux.h>
+// Tests
+// - datatools
+#include <bayeux/datatools/exception.h>
+#include <bayeux/datatools/library_info.h>
+// - SNCabling:
+#include <sncabling/sncabling.h>
+
+// Mute some specific "shadow" warnings in Boost <=1.55:
+#if defined (__clang__)
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wshadow"
+#endif
+#if defined (__GNUC__)
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wshadow"
+#endif
+
+#include <bayeux/datatools/kernel.h>
+
+#if defined (__GNUC__)
+#pragma GCC diagnostic pop
+#endif
+#if defined (__clang__)
+#pragma clang diagnostic pop
+#endif
+
+// This project::
+#include <snfee/snfee.h>
+#include <snfee/snfee_version.h>
+
+namespace snfee {
+  
+  // static
+  sys * sys::_instance_ = nullptr;
+
+  sys::sys(const datatools::logger::priority logging_)
+  {
+    _logging_ = logging_;
+    DT_THROW_IF(sys::_instance_ != nullptr,
+                std::logic_error,
+                "SNFEE system singleton is already set!");
+    sys::_instance_ = this;
+    return;
+  }
+
+  sys::~sys()
+  {
+    if (is_initialized()) {
+      shutdown();
+    }
+    sys::_instance_ = nullptr;
+    return;
+  }
+
+  bool sys::is_initialized() const
+  {
+    return _initialized_;
+  }
+
+  void sys::initialize()
+  {
+    DT_THROW_IF(is_initialized(), std::logic_error,
+                "SNFEE system singleton is already initialized!");
+    // Register library informations in the Bayeux/datatools' kernel:
+    _libinfo_registration_();
+    _initialized_ = true;
+    return;
+  }
+  
+  void sys::shutdown()
+  {
+    DT_THROW_IF(!is_initialized(),
+                std::logic_error,
+                "SNFEE system singleton is not initialized!");
+    _initialized_ = false;
+    _libinfo_deregistration_();
+    return;
+  }
+
+  // static
+  bool sys::is_instantiated()
+  {
+    return _instance_ != nullptr;
+  }
+
+  // static
+  sys & sys::instance()
+  {
+    return *_instance_;
+  }
+
+  // static
+  const sys & sys::const_instance()
+  {
+    return *_instance_;
+  }
+
+  // static
+  sys & sys::instantiate(const datatools::logger::priority logging_)
+  {
+    if (!sys::is_instantiated()) {
+      static std::unique_ptr<sys> _snfeeSys_handler;
+      if (!_snfeeSys_handler) {
+        // Allocate the SNFEE sys library singleton and initialize it:
+        _snfeeSys_handler.reset(new sys(logging_));
+      }
+    }
+    return sys::instance();
+  }
+
+  void sys::_libinfo_registration_()
+  {
+
+    DT_THROW_IF(!datatools::kernel::is_instantiated(), std::runtime_error,
+                "The Bayeux/datatools' kernel is not instantiated !");
+    datatools::kernel & krnl = datatools::kernel::instance();
+
+    // Populate the library info register:
+    datatools::library_info & lib_info_reg = krnl.grab_library_info_register();
+
+    {
+      // SNFEE itself:
+      DT_THROW_IF(lib_info_reg.has("snfee"), std::logic_error, "SNFEE is already registered !");
+      datatools::properties & snfee_lib_infos = lib_info_reg.registration("snfee",
+                                                                          "SNFEE provides the software environment for accessing and "
+                                                                          "manage the front-end electronics of the SuperNEMO experiment.",
+                                                                          snfee::version());
+
+      // Register the SNFEE resource path in the datatools' kernel:
+      std::string resources_dir = "@CMAKE_INSTALL_PREFIX@/@CMAKE_INSTALL_DATAROOTDIR@/@SNFrontEndElectronics_TAG@/resources";
+      snfee_lib_infos.store_string(datatools::library_info::keys::install_resource_dir(),
+                                   resources_dir);
+
+      // If the 'SNFEE_RESOURCE_DIR' environment variable is set, it will supersede
+      // the official registered resource path above through the 'datatools::fetch_path_with_env'
+      // function:
+      snfee_lib_infos.store_string(datatools::library_info::keys::env_resource_dir(),
+                                   "SNFEE_RESOURCES_DIR");
+
+    }
+    return;
+  }
+
+  void sys::_libinfo_deregistration_()
+  {
+    if (datatools::kernel::is_instantiated()) {
+      datatools::kernel & krnl = datatools::kernel::instance();
+      if (krnl.has_library_info_register()) {
+        // Access to the datatools kernel library info register:
+        datatools::library_info &lib_info_reg = krnl.grab_library_info_register();
+
+        // Unregistration of all registered submodules from the kernel's
+        // library info register:
+        if (lib_info_reg.has("snfee")) {
+          // DT_LOG_TRACE(_logging_,
+          //           "Deregistration of the SNFEE library from the Bayeux/datatools' kernel...");
+          lib_info_reg.unregistration("snfee");
+          // DT_LOG_TRACE(_logging_,
+          // "SNFEE library has been deregistered from the Bayeux/datatools' kernel."); 
+        }
+      }
+    }
+    return;
+  }
+
+} // namespace snfee
+
+namespace {
+
+  static bool _snfeeInit = false;
+  static bool _sncablingInitMaster = false;
+
+  void snfee_initialize_impl(const datatools::logger::priority logging_ = datatools::logger::PRIO_FATAL)
+  {
+    ::datatools::logger::priority logging = logging_;
+    DT_LOG_TRACE_ENTERING(logging);
+    // snfee::init_resources();
+    DT_THROW_IF(!datatools::kernel::is_instantiated(),
+                std::runtime_error,
+                "The Bayeux/datatools' kernel is not instantiated !");
+    if (!::snfee::sys::is_instantiated()) {
+      DT_LOG_TRACE(logging, "Instantiating SNFEE system singleton...");
+      ::snfee::sys & snfeeSys = ::snfee::sys::instantiate(logging);
+      DT_LOG_TRACE(logging, "Initializing SNFEE system singleton with specific internals...");
+      snfeeSys.initialize();
+    }
+    DT_LOG_TRACE_EXITING(logging);
+  }
+
+  void snfee_terminate_impl()
+  {
+    ::datatools::logger::priority logging = datatools::logger::PRIO_FATAL;
+    DT_LOG_TRACE_ENTERING(logging);
+    if (::snfee::sys::is_instantiated()) {
+      DT_LOG_TRACE(logging, "Shutdown SNFEE system singleton specific internals...");
+      ::snfee::sys & snfeeSys = ::snfee::sys::instance();
+      snfeeSys.shutdown();
+      DT_LOG_TRACE(logging, "SNFEE system singleton have been terminated.");
+    }
+    DT_LOG_TRACE_EXITING(logging);
+  }
+
+}
+
+namespace snfee {
+
+  void initialize(int argc_, char * argv_[], uint32_t flags_)
+  {
+    if (! ::_snfeeInit) {
+      if (!::bayeux::is_initialized()) {
+        // Wrap Bayeux initialization because we need resources from various Bayeux's modules:
+        ::bayeux::initialize(argc_, argv_, flags_);
+      }
+      if (!::sncabling::is_initialized()) {
+        ::sncabling::initialize(argc_, argv_, flags_);
+        ::_sncablingInitMaster = true;
+      }
+      // Initialization code from SNFEE itself:
+      datatools::logger::priority logging = datatools::logger::PRIO_FATAL;
+      
+      snfee_initialize_impl(logging);
+      ::_snfeeInit = true;
+    } else {
+      DT_THROW(std::logic_error,
+               "Attempt to initialize the already initialized SNFEE library!");
+    }
+    return;
+  }
+
+  void terminate()
+  {
+    if (::_snfeeInit) {
+      ::_snfeeInit = false;
+      // Termination code for SNFEE:
+      snfee_terminate_impl();
+      if (::sncabling::is_initialized() and ::_sncablingInitMaster) {
+        ::sncabling::terminate();
+      }
+      // Wrap Bayeux termination:
+      ::bayeux::terminate();
+    } else {
+      DT_THROW(std::logic_error,
+               "Attempt to terminate the already terminated SNFEE library!");
+    }
+    return;
+  }
+  
+} // namespace snfee
+

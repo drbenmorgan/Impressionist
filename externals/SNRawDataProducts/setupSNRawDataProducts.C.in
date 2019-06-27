@@ -1,0 +1,10 @@
+// Help ROOT find the project headers
+R__ADD_INCLUDE_PATH(@PROJECT_SOURCE_DIR@)
+
+// Load the library (which contains the dict?)
+R__LOAD_LIBRARY(SNRawDataProducts)
+
+// This must have the same name as the script, or
+// ROOT will issue a warning when we run it as a
+// load-time script ("root setupSNemoRawDataObj.C")
+void setupSNRawDataProducts(){}
