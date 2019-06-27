@@ -33,7 +33,7 @@ endif()
 find_package(Boost REQUIRED date_time)
 
 # Need ROOT for dictionary generation
-find_package(ROOT 6.12 REQUIRED)
+#find_package(ROOT 6.12 REQUIRED)
 
 # Need threads for the rhd2rtd program
 set(THREADS_PREFER_PTHREAD_FLAG ON)
@@ -41,17 +41,17 @@ find_package(Threads REQUIRED)
 
 # - Library build
 # Add the Boost/Root dictionaries into the library for now
-include(${ROOT_DIR}/modules/RootNewMacros.cmake)
+#include(${ROOT_DIR}/modules/RootNewMacros.cmake)
 # Need incdirs until root_generate_dictionary support usage requirements/genexs
-include_directories(${PROJECT_SOURCE_DIR})
-include_directories(${Boost_INCLUDE_DIRS})
-include_directories(${Bayeux_INCLUDE_DIRS})
-root_generate_dictionary(SNRawDataProducts_dict
+#include_directories(${PROJECT_SOURCE_DIR})
+#include_directories(${Boost_INCLUDE_DIRS})
+#include_directories(${Bayeux_INCLUDE_DIRS})
+#root_generate_dictionary(SNRawDataProducts_dict
   # Don't add headers explicitly or their buildtime paths end up in the dict
   # Use #include in the linkdef to bring in what's needed.
-  MODULE SNRawDataProducts
-  LINKDEF ${PROJECT_SOURCE_DIR}/snfee/root_dict_linkdef.h
-  OPTIONS "-noIncludePaths")
+  #  MODULE SNRawDataProducts
+  #LINKDEF ${PROJECT_SOURCE_DIR}/snfee/root_dict_linkdef.h
+  #OPTIONS "-noIncludePaths")
 
 # The library itself
 add_library(SNRawDataProducts SHARED
@@ -89,23 +89,24 @@ add_library(SNRawDataProducts SHARED
   snfee/io/multifile_data_writer.h
   # Boost.Serialization, Root dictionaries
   snfee/boost_dict.cc
-  ${CMAKE_CURRENT_BINARY_DIR}/SNRawDataProducts_dict.cxx
+  #${CMAKE_CURRENT_BINARY_DIR}/SNRawDataProducts_dict.cxx
   )
 
 target_include_directories(SNRawDataProducts PUBLIC
   $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}>
   $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>
   )
-target_link_libraries(SNRawDataProducts PUBLIC Bayeux::Bayeux Boost::date_time ROOT::RIO)
+target_link_libraries(SNRawDataProducts PUBLIC Bayeux::Bayeux Boost::date_time)
+#ROOT::RIO)
 
 # Configure build time ROOT setup script
 configure_file("setupSNRawDataProducts.C.in" "setupSNRawDataProducts.C" @ONLY)
 
 # Programs
-add_subdirectory(programs)
+#add_subdirectory(programs)
 
 # Examples
-add_subdirectory(examples)
+#add_subdirectory(examples)
 
 # Installation
 # - Interface
@@ -120,11 +121,11 @@ install(TARGETS SNRawDataProducts
 #    - <libname>.rootmap
 #    - <libname>_rdict.pcm
 # - For now, we *know* that prefix is "lib" so use directly
-set(ROOTMAP_FILE "${CMAKE_CURRENT_BINARY_DIR}/libSNRawDataProducts.rootmap")
-set(PCM_FILE "${CMAKE_CURRENT_BINARY_DIR}/libSNRawDataProducts_rdict.pcm")
-install(FILES ${ROOTMAP_FILE} ${PCM_FILE}
-  DESTINATION ${CMAKE_INSTALL_LIBDIR}
-  )
+#set(ROOTMAP_FILE "${CMAKE_CURRENT_BINARY_DIR}/libSNRawDataProducts.rootmap")
+#set(PCM_FILE "${CMAKE_CURRENT_BINARY_DIR}/libSNRawDataProducts_rdict.pcm")
+#install(FILES ${ROOTMAP_FILE} ${PCM_FILE}
+#  DESTINATION ${CMAKE_INSTALL_LIBDIR}
+#  )
 
 install(DIRECTORY snfee
   DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
