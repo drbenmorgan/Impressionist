@@ -59,10 +59,19 @@ ExternalProject_Add(BAYEUX_EP
 
 # - Create "imported" target for Bayeux so we can link to it just as if
 #   we'd called find_package(Bayeux).
+find_package(CLHEP REQUIRED)
+find_package(Boost 1.69 REQUIRED
+  filesystem
+  program_options
+  regex
+  serialization
+  system
+  )
+
 add_library(Bayeux::Bayeux UNKNOWN IMPORTED)
 set_property(TARGET Bayeux::Bayeux PROPERTY IMPORTED_LOCATION ${Bayeux_LIBRARY})
 set_property(TARGET Bayeux::Bayeux PROPERTY INTERFACE_INCLUDE_DIRECTORIES "${Bayeux_INCLUDE_DIRS}")
-set_property(TARGET Bayeux::Bayeux PROPERTY INTERFACE_LINK_LIBRARIES "${Boost_LIBRARIES}")
+set_property(TARGET Bayeux::Bayeux PROPERTY INTERFACE_LINK_LIBRARIES "${Boost_LIBRARIES};CLHEP::CLHEP")
 # Because Bayeux doesn't export its usage requirements properly
 set_property(TARGET Bayeux::Bayeux PROPERTY INTERFACE_COMPILE_DEFINITIONS BOOST_MATH_DISABLE_STD_FPCLASSIFY)
 

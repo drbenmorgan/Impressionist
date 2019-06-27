@@ -15,14 +15,22 @@ cet_set_compiler_flags(
 
 # Build externals, because we don't have a UPS product for them
 # It also helps test against the newer compilers/standards required
+# - Mock find_package to allow mutual find/use of externals
+macro(find_package)
+  if(NOT "${ARGV0}" MATCHES "Bayeux")
+    _find_package(${ARGV})
+  endif()
+endmacro()
 include(externals/bayeux.cmake)
 include(externals/gitconddb.cmake)
+add_subdirectory(externals/SNRawDataProducts)
 
-# Find other needed packages
+# Find directly needed packages
 find_package(art 3 REQUIRED)
 find_package(canvas_root_io REQUIRED)
 find_package(art_root_io REQUIRED)
 find_package(ROOT REQUIRED)
+
 
 # Set them up...
 include(ArtDictionary)
