@@ -13,6 +13,12 @@ cet_set_compiler_flags(
 
 # Ignore CET_SANITIZE... for now
 
+# Include support modules
+list(INSERT CMAKE_MODULE_PATH 0 "${CMAKE_CURRENT_LIST_DIR}/cmake")
+
+# - Binreloc Generator
+include(binreloc/GenerateBinreloc)
+
 # Build externals, because we don't have a UPS product for them
 # It also helps test against the newer compilers/standards required
 include(externals/bayeux.cmake)
