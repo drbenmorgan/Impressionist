@@ -17,3 +17,13 @@ add_custom_command(TARGET snemo_services_ResourceService_service
   WORKING_DIRECTORY $<TARGET_FILE_DIR:snemo_services_ResourceService_service>
   COMMENT "linking ResourceService resource tree"
   )
+
+# As VariantService relies on KernelService, link to it
+simple_plugin(VariantService "service"
+  snemo_services_KernelService_service
+  snemo_edm
+  Bayeux::Bayeux
+  art_Framework_Principal
+  )
+
+
